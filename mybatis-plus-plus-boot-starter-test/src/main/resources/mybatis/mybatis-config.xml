@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"     "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="cacheEnabled" value="true" />
+        <setting name="useGeneratedKeys" value="false" />
+        <setting name="defaultExecutorType" value="REUSE" />
+        <!-- 是否开启自动驼峰命名规则（camel case）映射， 默认false  -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 允许插入null -->
+        <setting name="jdbcTypeForNull" value="NULL"/>
+        <!--是否开启日志-->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+</configuration>
