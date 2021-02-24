@@ -30,4 +30,5 @@ mybatis++核心功能支持无sql双表查询和单表增删改查，设计思�
   - [x] 逆向工程
   - [ ] 正向工程（1.5版本后开发）
 
-
+## 使用文档
+使用文档可直接看mybatis-plus-plus-boot-starter-test下的[配置文件](https://github.com/tailwolf/mybatis-plus-plus/blob/0.x/mybatis-plus-plus-boot-starter-test/src/main/resources/application.yml)和[测试用例](https://github.com/tailwolf/mybatis-plus-plus/tree/0.x/mybatis-plus-plus-boot-starter-test/src/test/java/com/tailwolf/test/doc)
