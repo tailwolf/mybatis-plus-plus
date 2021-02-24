@@ -97,12 +97,12 @@ public interface EntityOptMapper<T> extends java.io.Serializable{
      * @param entityDelete
      * @return
      */
-    int dslDelete(@Param("dslWrapper") EntityDelete entityDelete);
+    int dslDelete(@Param("dslWrapper") EntityDelete<T> entityDelete);
 
     /**
      * dsl更新
      * @param entityUpdate
      * @return
      */
-    int dslUpdate(@Param("dslWrapper") EntityUpdate entityUpdate);
+    int dslUpdate(@Param("dslWrapper") EntityUpdate<T> entityUpdate);
 }

@@ -1,6 +1,7 @@
 package com.tailwolf.mybatis.datasourse;
 
 import com.tailwolf.mybatis.core.common.interceptor.BaseInterceptor;
+import com.tailwolf.mybatis.core.dsl.wrapper.base.BaseWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
@@ -46,7 +47,7 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
         if(this.dslMapperList.contains(mappedStatementId)){
             Object parameter = args[1];
             MapperMethod.ParamMap paramMap = (MapperMethod.ParamMap) parameter;
-            QueryBaseWrapper dslWrapper = (QueryBaseWrapper)paramMap.get("dslWrapper");
+            BaseWrapper dslWrapper = (BaseWrapper)paramMap.get("dslWrapper");
 
             dataSourceName = (String)ReflectionUtil.getProperty(dslWrapper, "dataSource");
         }else{

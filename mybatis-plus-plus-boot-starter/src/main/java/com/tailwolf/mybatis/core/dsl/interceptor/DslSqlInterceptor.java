@@ -230,10 +230,10 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             ReflectionUtil.setProperty(dslWrapper, "parameterObject", dynamicContextMap);
             ReflectionUtil.setProperty(mappedStatement, "sqlSource", sqlSource);
 
-            Object[] args = new Object[2];
-            args[0] = mappedStatement;
-            args[1] = dynamicContextMap;
-            ReflectionUtil.setProperty(invocation, "args", args);
+//            Object[] args = new Object[2];
+//            args[0] = mappedStatement;
+//            args[1] = dynamicContextMap;
+//            ReflectionUtil.setProperty(invocation, "args", args);
         }
         else{
             invocation.proceed();

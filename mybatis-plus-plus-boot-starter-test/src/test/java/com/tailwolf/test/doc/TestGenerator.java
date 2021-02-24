@@ -1,4 +1,4 @@
-package com.tailwolf.test;
+package com.tailwolf.test.doc;
 
 import com.tailwolf.mybatis.generator.CodeGenerator;
 import com.tailwolf.mybatis.generator.config.DsConfig;

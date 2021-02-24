@@ -123,12 +123,20 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
      */
     public JoinQuery<T, E> from(CreateObjectInterface<T> createObjectInterface) {
         T o = createObjectInterface.create();
+        this.fromObject = o;
         return this;
     }
 
     public JoinQuery<T, E> from(T table1, E table2) {
         this.fromObject = table1;
         this.joinObject = table2;
+        this.joinKeyWord = MontageSqlConstant.BLANK;
+        return this;
+    }
+
+    public JoinQuery<T, E> from(CreateObjectInterface<T> table1, CreateObjectInterface<E> table2) {
+        this.fromObject = table1.create();
+        this.joinObject = table2.create();
         this.joinKeyWord = MontageSqlConstant.BLANK;
         return this;
     }

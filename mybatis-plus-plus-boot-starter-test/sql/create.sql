@@ -58,7 +58,7 @@ DROP TABLE IF EXISTS `task`;
 CREATE TABLE `task` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `task_name` varchar(255) DEFAULT NULL COMMENT '任务名称',
-  `task_time` datetime DEFAULT NULL COMMENT '队伍名称',
+  `task_time` datetime DEFAULT NULL COMMENT '任务时间',
   `project_id` int(11) DEFAULT NULL COMMENT '项目id',
   `create_on` datetime DEFAULT NULL COMMENT '创建日期',
   `create_by` varchar(255) DEFAULT NULL COMMENT '创建人',

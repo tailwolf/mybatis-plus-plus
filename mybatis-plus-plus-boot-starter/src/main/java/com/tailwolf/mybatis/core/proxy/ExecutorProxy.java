@@ -43,7 +43,15 @@ public class ExecutorProxy implements MethodInterceptor {
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         String name = method.getName();
-        if("query".equals(name) && args.length == 4){
+        if("update".equals(name) && args.length == 2){
+            Object parameter = args[1];
+            BaseWrapper baseWrapper = getBaseWrapper(parameter);
+            if(baseWrapper != null){
+                Object parameterObject = ReflectionUtil.getProperty(baseWrapper, "parameterObject");
+                args[1] = parameterObject;
+            }
+        }
+        else if("query".equals(name) && args.length == 4){
             //这里生成一级缓存key的时候，加多了一个数据源名称因素，避免同事务下同样的sql语句但数据源不同，导致击中相同的缓存
             MappedStatement mappedStatement = (MappedStatement)args[0];
             Object parameter = args[1];

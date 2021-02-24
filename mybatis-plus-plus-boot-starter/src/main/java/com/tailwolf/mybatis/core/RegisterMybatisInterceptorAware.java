@@ -34,7 +34,7 @@ public class RegisterMybatisInterceptorAware implements ApplicationContextAware 
          * 添加拦截器，同一拦截层次，后添加，先执行
          */
         //分页拦截器
-        Interceptor pagingInterceptor = new PagingInterceptor();
+        PagingInterceptor pagingInterceptor = new PagingInterceptor();
         pagingInterceptor.setProperties(properties);
         configuration.addInterceptor(pagingInterceptor);
         //创建cglib代理Executor拦截器

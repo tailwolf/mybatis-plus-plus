@@ -4,6 +4,7 @@ import com.tailwolf.mybatis.core.ColumnModel;
 import com.tailwolf.mybatis.core.annotation.*;
 import com.tailwolf.mybatis.core.annotation.Collection;
 import com.tailwolf.mybatis.core.dsl.interceptor.DslSqlInterceptor;
+import com.tailwolf.mybatis.core.util.CollectionUtil;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
@@ -189,8 +190,8 @@ public class BaseInterceptor {
      * @throws InvocationTargetException
      */
     protected void createResultMap(Class clazz, Configuration configuration, StringBuffer resultMapBuffer) throws IllegalAccessException, IOException, NoSuchMethodException, InvocationTargetException {
-        Field[] fileds = ReflectionUtil.getFileds(clazz, Column.class);
-        if(fileds == null || fileds.length < 1){
+        List<Field> fileds = ReflectionUtil.getAllFields(clazz);
+        if(CollectionUtil.isEmtpy(fileds)){
             return;
         }
 

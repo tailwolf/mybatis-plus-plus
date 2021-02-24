@@ -17,7 +17,7 @@ public class Task implements Serializable{
     //任务名称
     private String taskName;
 
-    //队伍名称
+    //任务时间
     private LocalDateTime taskTime;
 
     //项目id
