@@ -30,5 +30,29 @@ mybatis++核心功能支持无sql双表查询和单表增删改查，设计思�
   - [x] 逆向工程
   - [ ] 正向工程（1.5版本后开发）
 
+## 特性预览
+#### 单表操作：  
+```java
+EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+entityQuery.eq(SysUser::getAccount, "小明").eq(SysUser::getUserPwd, "ggg").asc(SysUser::getId);
+List<SysUser> sysUserList = sysUserService.dslQuery(entityQuery);
+```
+#### 双表操作：  
+```java
+JoinQuery<SysUser, SysRole> joinQuery = new JoinQuery<>();
+joinQuery.select(col -> col.column(SysUser::getAccount).column(SysRole::getRoleName))
+        .from(SysUser::new).leftJoin(SysRole::new)
+        .on(condition -> condition.eq(SysUser::getId, SysRole::getUserId))
+        .eq(SysUser::getAccount, "xiaoming");
+List<SysUserVo> sysUserVoList = joinOptService.joinQuery(joinQuery, SysUserVo.class);
+```
+#### 基于dsl的动态数据源：  
+```java
+EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+entityQuery.eq(SysUser::getAccount, "小明").eq(SysUser::getUserPwd, "ggg").asc(SysUser::getId);
+entityQuery.setDataSource("数据源名称");
+List<SysUser> sysUserList = sysUserService.dslQuery(entityQuery);
+```
+
 ## 使用文档
 使用文档可直接看mybatis-plus-plus-boot-starter-test下的[配置文件](https://github.com/tailwolf/mybatis-plus-plus/blob/0.x/mybatis-plus-plus-boot-starter-test/src/main/resources/application.yml)和[测试用例](https://github.com/tailwolf/mybatis-plus-plus/tree/0.x/mybatis-plus-plus-boot-starter-test/src/test/java/com/tailwolf/test/doc)
