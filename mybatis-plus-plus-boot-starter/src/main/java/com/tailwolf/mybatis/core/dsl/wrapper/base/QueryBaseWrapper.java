@@ -60,8 +60,8 @@ public abstract class QueryBaseWrapper extends BaseWrapper {
     public abstract Limiter createLimiter();
 
     public static final class ConditionKeyworks {
-        public static final String DESC = "desc";
-        public static final String ASC = "asc";
+//        public static final String DESC = "desc";
+//        public static final String ASC = "asc";
 
         public static final String LE = "le";
         public static final String LT = "lt";
@@ -72,10 +72,11 @@ public abstract class QueryBaseWrapper extends BaseWrapper {
 
         public static final String AND = "and";
         public static final String OR = "or";
-        public static final String AND_START = "and_start";
-        public static final String AND_END = "and_end";
-        public static final String OR_START = "or_start";
-        public static final String OR_END = "or_end";
+
+//        public static final String AND_START = "and_start";
+//        public static final String AND_END = "and_end";
+//        public static final String OR_START = "or_start";
+//        public static final String OR_END = "or_end";
     }
 
     public NodeIterator<InOrNotInNode> getInOrNotInNodeQueue() {

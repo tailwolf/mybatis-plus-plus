@@ -2,6 +2,7 @@ package com.tailwolf.mybatis.core.dsl.wrapper;
 
 import com.tailwolf.mybatis.constant.MontageSqlConstant;
 import com.tailwolf.mybatis.core.dsl.functional.create.CreateObjectInterface;
+import com.tailwolf.mybatis.core.dsl.functional.where.Condition;
 import com.tailwolf.mybatis.core.dsl.wrapper.base.QueryBaseWrapper;
 import com.tailwolf.mybatis.core.dsl.wrapper.base.UpdateBaseWrapper;
 import com.tailwolf.mybatis.core.dsl.functional.group.join.JoinGroupBy;
@@ -228,7 +229,7 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
      * @return
      */
     public JoinQuery<T, E> desc(OrderByFirstFunctional<T> orderByFirstFunctional){
-        this.getOrderConditionsQueue().add(OrderByNode.newInstance(ConditionKeyworks.DESC, orderByFirstFunctional));
+        this.getOrderConditionsQueue().add(OrderByNode.newInstance(MontageSqlConstant.DESC, orderByFirstFunctional));
         return this;
     }
 
@@ -238,7 +239,7 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
      * @return
      */
     public JoinQuery<T, E> desc(OrderBySecondFunctional<E> orderBySecondFunctional){
-        this.getOrderConditionsQueue().add(OrderByNode.newInstance(ConditionKeyworks.DESC, orderBySecondFunctional));
+        this.getOrderConditionsQueue().add(OrderByNode.newInstance(MontageSqlConstant.DESC, orderBySecondFunctional));
         return this;
     }
 
@@ -248,7 +249,7 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
      * @return
      */
     public JoinQuery<T, E> asc(OrderByFirstFunctional<T> orderByFirstFunctional){
-        this.getOrderConditionsQueue().add(OrderByNode.newInstance(ConditionKeyworks.ASC, orderByFirstFunctional));
+        this.getOrderConditionsQueue().add(OrderByNode.newInstance(MontageSqlConstant.ASC, orderByFirstFunctional));
         return this;
     }
 
@@ -258,7 +259,7 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
      * @return
      */
     public JoinQuery<T, E> asc(JoinConditionFunctional<E> joinConditionFunctional){
-        this.getOrderConditionsQueue().add(OrderByNode.newInstance(ConditionKeyworks.ASC, joinConditionFunctional));
+        this.getOrderConditionsQueue().add(OrderByNode.newInstance(MontageSqlConstant.ASC, joinConditionFunctional));
         return this;
     }
 
@@ -600,11 +601,20 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
         joinConditionInterface.joinCondition(this.getJoinCondition());
         LinkedList<ConditionNode> conditionsQueue = this.getJoinCondition().getConditionsQueue();
         if(!conditionsQueue.isEmpty()){
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(UpdateBaseWrapper.ConditionKeyworks.OR_START, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.OR_START, null, null));
             this.getWhereConditionsQueue().addAll(conditionsQueue);
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(UpdateBaseWrapper.ConditionKeyworks.OR_END, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.OR_END, null, null));
         }
         this.getJoinCondition().clean();
+        return this;
+    }
+
+    /**
+     * or条件构造
+     * @return
+     */
+    public JoinQuery<T, E> or(){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.OR, null, null));
         return this;
     }
 
@@ -616,9 +626,9 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
         joinConditionInterface.joinCondition(this.getJoinCondition());
         LinkedList<ConditionNode> conditionsQueue = this.getJoinCondition().getConditionsQueue();
         if(!conditionsQueue.isEmpty()){
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(UpdateBaseWrapper.ConditionKeyworks.AND_START, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.AND_START, null, null));
             this.getWhereConditionsQueue().addAll(conditionsQueue);
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(UpdateBaseWrapper.ConditionKeyworks.AND_END, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.AND_END, null, null));
         }
         this.getJoinCondition().clean();
         return this;

@@ -10,6 +10,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -436,6 +437,19 @@ public class BaseInterceptor {
         else if(expression instanceof Parenthesis){
             Parenthesis parenthesis = (Parenthesis)expression;
             return getSingleExpression(columnName, parenthesis.getExpression());
+        }else if(expression instanceof OrExpression){
+            OrExpression orExpression = (OrExpression)expression;
+            Expression leftExpression = orExpression.getLeftExpression();
+            Expression leftSingleExpression = getSingleExpression(columnName, leftExpression);
+            if(leftSingleExpression != null){
+                return leftSingleExpression;
+            }
+
+            Expression rightExpression = orExpression.getRightExpression();
+            Expression rightSingleExpression = getSingleExpression(columnName, rightExpression);
+            if(rightSingleExpression != null){
+                return rightSingleExpression;
+            }
         }
         else{
             AndExpression andExpression = (AndExpression)expression;

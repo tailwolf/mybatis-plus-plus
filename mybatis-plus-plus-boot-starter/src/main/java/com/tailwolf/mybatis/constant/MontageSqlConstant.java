@@ -53,5 +53,10 @@ public class MontageSqlConstant {
     public static final String COUNT_TEMPLATE = "COUNT($)";
     public static final String COUNT_ALL = "COUNT(*)";
 
+    public static final String AND_START = "and_start";
+    public static final String AND_END = "and_end";
+    public static final String OR_START = "or_start";
+    public static final String OR_END = "or_end";
+
     public static final String POINT = ".";
 }

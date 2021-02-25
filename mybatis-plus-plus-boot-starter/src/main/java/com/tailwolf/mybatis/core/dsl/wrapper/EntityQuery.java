@@ -83,7 +83,7 @@ public class EntityQuery<T> extends QueryBaseWrapper implements Serializable {
      * @return
      */
     public EntityQuery<T> desc(OrderByFunctional<T> orderByFunctional){
-        this.getOrderConditionsQueue().add(OrderByNode.newInstance(ConditionKeyworks.DESC, orderByFunctional));
+        this.getOrderConditionsQueue().add(OrderByNode.newInstance(MontageSqlConstant.DESC, orderByFunctional));
         return this;
     }
 
@@ -93,7 +93,7 @@ public class EntityQuery<T> extends QueryBaseWrapper implements Serializable {
      * @return
      */
     public EntityQuery<T> asc(OrderByFunctional<T> orderByFunctional){
-        this.getOrderConditionsQueue().add(OrderByNode.newInstance(ConditionKeyworks.ASC, orderByFunctional));
+        this.getOrderConditionsQueue().add(OrderByNode.newInstance(MontageSqlConstant.ASC, orderByFunctional));
         return this;
     }
 
@@ -268,11 +268,16 @@ public class EntityQuery<T> extends QueryBaseWrapper implements Serializable {
         conditionInterface.condition(this.getCondition());
         LinkedList<ConditionNode> conditionsQueue = this.getCondition().getConditionsQueue();
         if(!conditionsQueue.isEmpty()){
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(EntityQuery.ConditionKeyworks.OR_START, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.OR_START, null, null));
             this.getWhereConditionsQueue().addAll(conditionsQueue);
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(EntityQuery.ConditionKeyworks.OR_END, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.OR_END, null, null));
         }
         this.getCondition().clean();
+        return this;
+    }
+
+    public EntityQuery<T> or(){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.OR, null, null));
         return this;
     }
 
@@ -284,9 +289,9 @@ public class EntityQuery<T> extends QueryBaseWrapper implements Serializable {
         conditionInterface.condition(this.getCondition());
         LinkedList<ConditionNode> conditionsQueue = this.getCondition().getConditionsQueue();
         if(!conditionsQueue.isEmpty()){
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(EntityQuery.ConditionKeyworks.AND_START, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.AND_START, null, null));
             this.getWhereConditionsQueue().addAll(conditionsQueue);
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(EntityQuery.ConditionKeyworks.AND_END, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.AND_END, null, null));
         }
         this.getCondition().clean();
         return this;

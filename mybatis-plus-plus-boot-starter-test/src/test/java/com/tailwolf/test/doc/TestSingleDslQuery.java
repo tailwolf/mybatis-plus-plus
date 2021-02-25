@@ -95,20 +95,23 @@ public class TestSingleDslQuery {
     }
 
     /**
-     * 测试or（或者）语法。or语法有问题
+     * 测试or语法。
      */
-//    @Test
-//    public void or(){
-//        //dslQuery，查询集合
-//        EntityQuery<SysUser> entityQuery = new EntityQuery<>();
-//        entityQuery.and(con -> con.(SysUser::getAccount, "account"));
-//        System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));
-//
-//        //dslQueryOne，查询一个对象
-////        EntityQuery<SysUser> entityQuery2 = new EntityQuery<>();
-////        entityQuery2.like(SysUser::getAccount, "%account%");
-////        System.out.println(JSON.toJSONString(sysUserService.dslQueryOne(entityQuery2)));
-//    }
+    @Test
+    public void or(){
+        EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+        entityQuery.eq(SysUser::getId, 1);
+//        entityQuery.or(orCondition -> orCondition.eq(SysUser::getAccount, "account"));
+        entityQuery.and(and -> and.eq(SysUser::getUserPwd, "llp").or().eq(SysUser::getAccount, "bbn"));
+        entityQuery.or();
+        entityQuery.eq(SysUser::getUserPwd, "ss");
+        System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));
+
+        //dslQueryOne，查询一个对象
+//        EntityQuery<SysUser> entityQuery2 = new EntityQuery<>();
+//        entityQuery2.like(SysUser::getAccount, "%account%");
+//        System.out.println(JSON.toJSONString(sysUserService.dslQueryOne(entityQuery2)));
+    }
 
     /**
      * 测试in语法
@@ -179,11 +182,12 @@ public class TestSingleDslQuery {
 
     /**
      * 测试orderBy语法
-     * SELECT * FROM sys_user WHERE deleted = 0 ORDER BY id ASC, account DESC
+     * SELECT * FROM sys_user WHERE user_pwd = 'ggg' AND deleted = 0 ORDER BY id ASC, account DESC
      */
     @Test
     public void orderBy(){
         EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+        entityQuery.eq(SysUser::getUserPwd, "ggg");
         entityQuery.asc(SysUser::getId);
         entityQuery.desc(SysUser::getAccount);
         System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));

@@ -98,7 +98,7 @@ public class TestSingleDslQueryOne {
     }
 
     /**
-     * 测试or（或者）语法。or语法有问题
+     * 测试or语法。or语法有问题
      */
 //    @Test
 //    public void or(){

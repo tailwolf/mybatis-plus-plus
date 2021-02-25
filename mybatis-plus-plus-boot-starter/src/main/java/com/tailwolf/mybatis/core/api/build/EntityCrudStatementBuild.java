@@ -62,7 +62,7 @@ public class EntityCrudStatementBuild extends MappedStatementBuild {
         //通过实体类删除
         id = typeName + "." + "delete";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = deleteByPk(id, configuration);
+        Node = delete(id, configuration);
         MappedStatement deleteMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, deleteMappedStatement);
         //通过实体类查询列表

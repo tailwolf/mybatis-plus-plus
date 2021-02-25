@@ -1,5 +1,6 @@
 package com.tailwolf.mybatis.core.dsl.wrapper.base;
 
+import com.tailwolf.mybatis.constant.MontageSqlConstant;
 import com.tailwolf.mybatis.core.dsl.ConditionInterface;
 import com.tailwolf.mybatis.core.dsl.wrapper.EntityQuery;
 import net.sf.cglib.proxy.Enhancer;
@@ -57,9 +58,9 @@ public abstract class UpdateBaseWrapper<T>  extends BaseWrapper {
         conditionInterface.condition(this.condition);
         LinkedList<ConditionNode> conditionsQueue = this.condition.getConditionsQueue();
         if(!conditionsQueue.isEmpty()){
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(EntityQuery.ConditionKeyworks.OR_START, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.OR_START, null, null));
             this.getWhereConditionsQueue().addAll(conditionsQueue);
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(EntityQuery.ConditionKeyworks.OR_END, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.OR_END, null, null));
         }
         this.condition.clean();
     }
@@ -68,9 +69,9 @@ public abstract class UpdateBaseWrapper<T>  extends BaseWrapper {
         conditionInterface.condition(this.condition);
         LinkedList<ConditionNode> conditionsQueue = this.condition.getConditionsQueue();
         if(!conditionsQueue.isEmpty()){
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(EntityQuery.ConditionKeyworks.AND_START, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.AND_START, null, null));
             this.getWhereConditionsQueue().addAll(conditionsQueue);
-            this.getWhereConditionsQueue().add(ConditionNode.newInstance(EntityQuery.ConditionKeyworks.AND_END, null, null));
+            this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.AND_END, null, null));
         }
         this.condition.clean();
     }
@@ -113,25 +114,6 @@ public abstract class UpdateBaseWrapper<T>  extends BaseWrapper {
 
     public void setPageTotal(Integer pageTotal) {
         this.pageTotal = pageTotal;
-    }
-
-    public static final class ConditionKeyworks {
-        public static final String DESC = "desc";
-        public static final String ASC = "asc";
-
-        public static final String LE = "le";
-        public static final String LT = "lt";
-        public static final String GE = "ge";
-        public static final String GT = "gt";
-        public static final String NE = "ne";
-        public static final String LIKE = "like";
-
-        public static final String AND = "and";
-        public static final String OR = "or";
-        public static final String AND_START = "and_start";
-        public static final String AND_END = "and_end";
-        public static final String OR_START = "or_start";
-        public static final String OR_END = "or_end";
     }
 
     public T getEntity() {

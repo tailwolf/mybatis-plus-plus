@@ -182,6 +182,14 @@ public class ConditionsBuilder {
             montageWhereConditions(queryEntity, nodeIterator.nextNonius(), filedColumnMap, filedColumnNameMap);
             return;
         }
+
+        //判断or的类型
+        if(MontageSqlConstant.OR.equals(conditionKeywork) && conditionNode.getFiledName() == null && conditionNode.getValue() == null){
+            this.whereBuffer.append(MontageSqlConstant.OR);
+            montageWhereConditions(queryEntity, nodeIterator.nextNonius(), filedColumnMap, filedColumnNameMap);
+            return;
+        }
+
         //判断是否应该加OR
         else if(nodeIterator.isOr(nodeIterator)){
             this.whereBuffer.append(MontageSqlConstant.OR);

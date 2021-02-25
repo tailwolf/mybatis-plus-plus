@@ -65,7 +65,7 @@ public class TestCrudApi {
         System.out.println(JSON.toJSONString(projectService.deleteByPk(43)));
     }
     /**
-     * 删除记录，实体类什么字段有值就拿什么做where条件。有bug
+     * 删除记录，实体类什么字段有值就拿什么做where条件。
      */
     @Test
     public void delete(){

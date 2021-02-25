@@ -1,7 +1,9 @@
 package com.tailwolf.mybatis.core.dsl.functional.where;
 
 import com.tailwolf.mybatis.constant.MontageSqlConstant;
+import com.tailwolf.mybatis.core.dsl.ConditionInterface;
 import com.tailwolf.mybatis.core.dsl.node.ConditionNode;
+import com.tailwolf.mybatis.core.dsl.wrapper.EntityQuery;
 
 import java.util.LinkedList;
 
@@ -53,6 +55,15 @@ public class Condition<R> {
     }
     public Condition<R> le(EntityConditionFunctional<R> conditionFunctional, Object value){
         conditionsQueue.add(ConditionNode.newInstance(MontageSqlConstant.LE, conditionFunctional, value));
+        return this;
+    }
+
+    /**
+     * or条件构造
+     * @return
+     */
+    public Condition<R> or(){
+        conditionsQueue.add(ConditionNode.newInstance(MontageSqlConstant.OR, null, null));
         return this;
     }
 

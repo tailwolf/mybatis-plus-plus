@@ -1,5 +1,6 @@
 package com.tailwolf.mybatis.core.dsl.iterator;
 
+import com.tailwolf.mybatis.constant.MontageSqlConstant;
 import com.tailwolf.mybatis.core.dsl.wrapper.base.UpdateBaseWrapper;
 import com.tailwolf.mybatis.core.exception.MybatisPlusPlusRuntimeException;
 import com.tailwolf.mybatis.core.dsl.node.ConditionNode;
@@ -163,7 +164,7 @@ public class NodeIterator<T> implements Iterator<T> {
      * @return
      */
     public boolean isAndStart(String conditionKeywork){
-        return UpdateBaseWrapper.ConditionKeyworks.AND_START.equals(conditionKeywork);
+        return MontageSqlConstant.AND_START.equals(conditionKeywork);
     }
 
     /**
@@ -172,7 +173,7 @@ public class NodeIterator<T> implements Iterator<T> {
      * @return
      */
     public boolean isOrStart(String conditionKeywork){
-        return  UpdateBaseWrapper.ConditionKeyworks.OR_START.equals(conditionKeywork);
+        return MontageSqlConstant.OR_START.equals(conditionKeywork);
     }
 
     /**
@@ -181,7 +182,7 @@ public class NodeIterator<T> implements Iterator<T> {
      * @return
      */
     public boolean isAndEnd(String conditionKeywork){
-        return UpdateBaseWrapper.ConditionKeyworks.AND_END.equals(conditionKeywork);
+        return MontageSqlConstant.AND_END.equals(conditionKeywork);
     }
 
     /**
@@ -190,7 +191,7 @@ public class NodeIterator<T> implements Iterator<T> {
      * @return
      */
     public boolean isOrEnd(String conditionKeywork){
-        return UpdateBaseWrapper.ConditionKeyworks.OR_END.equals(conditionKeywork);
+        return MontageSqlConstant.OR_END.equals(conditionKeywork);
     }
 
     /**
@@ -209,11 +210,11 @@ public class NodeIterator<T> implements Iterator<T> {
      * @return
      */
     public boolean isEnd(String conditionKeywork){
-        if(UpdateBaseWrapper.ConditionKeyworks.OR_END.equals(conditionKeywork)){
+        if(MontageSqlConstant.OR_END.equals(conditionKeywork)){
             orEndCount++;
             return true;
         }
-        return UpdateBaseWrapper.ConditionKeyworks.AND_END.equals(conditionKeywork);
+        return MontageSqlConstant.AND_END.equals(conditionKeywork);
     }
 
     /**
@@ -228,7 +229,7 @@ public class NodeIterator<T> implements Iterator<T> {
         if(isOrEnd(conditionKeywork)){
             //如果是第一次or_end，且第一个节点为or_star，则应该加OR
             ConditionNode firstNode = conditionsIterator.getFirst();
-            if(UpdateBaseWrapper.ConditionKeyworks.OR_START.equals(firstNode.getConditionKeywork())
+            if(MontageSqlConstant.OR_START.equals(firstNode.getConditionKeywork())
                     && orEndCount == 1){
                 return true;
             }
@@ -246,6 +247,11 @@ public class NodeIterator<T> implements Iterator<T> {
         ConditionNode conditionNode = conditionsIterator.preNode();
         String conditionKeywork = conditionNode.getConditionKeywork();
         if(isStart(conditionKeywork)){
+            return false;
+        }
+        //如果上一个节点只是or，则不应该加and
+        ConditionNode preNode = conditionsIterator.preNode();
+        if(MontageSqlConstant.OR.equals(preNode.getConditionKeywork())){
             return false;
         }
         //是否是OR
