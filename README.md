@@ -1,6 +1,7 @@
 ## 本框架定位
-mybatis++没有改变任何mybatis的原生功能和配置。  
-mybatis++核心功能支持无sql双表查询和单表增删改查，设计思想是，对一两张表的操作封装了全自动orm，多表的复杂操作应该发挥mybatis的优势。
+mybatis-complete，顾名思义，即是对mybatis的补全。  
+mybatis-complete没有改变任何mybatis的原生功能和配置，它的核心功能支持无sql双表查询和单表增删改查。  
+设计思想是，一两张表的简单操作封装成全自动orm，多表的复杂操作则应该发挥mybatis自身的优势。
 
 ## 功能
 - [x] 单表
