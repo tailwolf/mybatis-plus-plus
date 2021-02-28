@@ -16,7 +16,7 @@ mybatis:
   #映射配置文件路径
   mapper-locations: classpath:mybatis/mapper/*.xml
 
-  # Mybatis++相关配置
+  # mybatis-complete相关配置
   complete:
     # 数据源列表
     propertiesList:
