@@ -1,0 +1,46 @@
+server:
+  port: 9003
+spring:
+  application:
+    name: WolfWebApplication #指定服务名
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mybatis-complete?useSSL=false&useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: 12345678
+
+# Mybatis相关配置
+mybatis:
+  #核心配置文件路径
+  config-location: classpath:mybatis/mybatis-config.xml
+  #映射配置文件路径
+  mapper-locations: classpath:mybatis/mapper/*.xml
+
+  # Mybatis++相关配置
+  complete:
+    # 数据源列表
+    propertiesList:
+      - driverClassName: com.mysql.cj.jdbc.Driver
+        name: datasource1 #数据源名称
+        url: jdbc:mysql://localhost:3306/mybatis-complete2?useSSL=false&useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+        username: root
+        password: 12345678
+
+    db-config:
+      #逻辑删除属性
+      logic-delete-field: deleted
+      #逻辑删除值
+      logic-delete-value: 1
+      #逻辑非删除值
+      logic-not-delete-value: 0
+    log-config:
+      #是否打印完整的sql和执行时间，默认false
+      completeSql: true
+
+
+#设置日志root级别
+logging:
+  level:
+    root: info
+  pattern:
+    console: "%d{yyyy-MM-dd} [%thread] %-5level %logger{50} - %msg%n"
