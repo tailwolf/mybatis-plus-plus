@@ -254,7 +254,7 @@ public class NodeIterator<T> implements Iterator<T> {
             return false;
         }
         //是否是OR
-        return !isOr(conditionsIterator);
+        return true;
     }
 
     private boolean isConditionKeyWord(NodeIterator<ConditionNode> conditionsIterator){

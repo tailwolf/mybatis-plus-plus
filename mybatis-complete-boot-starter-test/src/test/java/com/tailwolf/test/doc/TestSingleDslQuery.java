@@ -101,10 +101,18 @@ public class TestSingleDslQuery {
     public void or(){
         EntityQuery<SysUser> entityQuery = new EntityQuery<>();
         entityQuery.eq(SysUser::getId, 1);
-//        entityQuery.or(orCondition -> orCondition.eq(SysUser::getAccount, "account"));
         entityQuery.and(and -> and.eq(SysUser::getUserPwd, "llp").or().eq(SysUser::getAccount, "bbn"));
         entityQuery.or();
         entityQuery.eq(SysUser::getUserPwd, "ss");
+        entityQuery.or(and -> and.eq(SysUser::getUserPwd, "mmm").or().eq(SysUser::getAccount, "vvv"));
+        System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));
+    }
+
+    @Test
+    public void or2(){
+        EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+        entityQuery.or(orCondition -> orCondition.eq(SysUser::getId, 1).eq(SysUser::getAccount, "aa"));
+        entityQuery.eq(SysUser::getUserPwd, "ddd");
         System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));
 
         //dslQueryOne，查询一个对象

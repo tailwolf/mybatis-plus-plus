@@ -100,19 +100,16 @@ public class TestSingleDslQueryOne {
     /**
      * 测试or语法。or语法有问题
      */
-//    @Test
-//    public void or(){
-//        //dslQuery，查询集合
-//        EntityQuery<SysUser> entityQuery = new EntityQuery<>();
-//        entityQuery.and(con -> con.(SysUser::getAccount, "account"));
-//        System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));
-//
-//        //dslQueryOne，查询一个对象
-////        EntityQuery<SysUser> entityQuery2 = new EntityQuery<>();
-////        entityQuery2.like(SysUser::getAccount, "%account%");
-////        System.out.println(JSON.toJSONString(sysUserService.dslQueryOne(entityQuery2)));
-//    }
-
+    @Test
+    public void or(){
+        EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+        entityQuery.eq(SysUser::getId, 1);
+        entityQuery.and(and -> and.eq(SysUser::getUserPwd, "llp").or().eq(SysUser::getAccount, "bbn"));
+        entityQuery.or();
+        entityQuery.eq(SysUser::getUserPwd, "ss");
+        entityQuery.or(and -> and.eq(SysUser::getUserPwd, "mmm").or().eq(SysUser::getAccount, "vvv"));
+        System.out.println(JSON.toJSONString(sysUserService.dslQueryOne(entityQuery)));
+    }
     /**
      * 测试in语法
      * SELECT * FROM sys_user WHERE account IN (1, 2, 3) AND deleted = 0

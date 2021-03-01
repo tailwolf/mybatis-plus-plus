@@ -316,6 +316,19 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
     }
 
     /**
+     * 不等于
+     * @param fromConditionFunctional
+     *        字段名
+     * @param joinConditionFunctional
+     *        值
+     * @return
+     */
+    public JoinQuery<T, E> ne(FromConditionFunctional<T> fromConditionFunctional, JoinConditionFunctional<E> joinConditionFunctional){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.NE, fromConditionFunctional, joinConditionFunctional));
+        return this;
+    }
+
+    /**
      * 等于
      * @param fromConditionFunctional
      *        字段名
@@ -342,6 +355,19 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
     }
 
     /**
+     * 等于
+     * @param joinConditionFunctional
+     *        字段名
+     * @param fromConditionFunctional
+     *        值
+     * @return
+     */
+    public JoinQuery<T, E> eq(FromConditionFunctional<T> fromConditionFunctional, JoinConditionFunctional<E> joinConditionFunctional){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.EQ, fromConditionFunctional, joinConditionFunctional));
+        return this;
+    }
+
+    /**
      * 大于
      * @param conditionFunctional
      *        字段名
@@ -356,14 +382,27 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
 
     /**
      * 大于
-     * @param conditionFunctional
+     * @param joinConditionFunctional
      *        字段名
      * @param value
      *        值
      * @return
      */
-    public JoinQuery<T, E> gt(JoinConditionFunctional<E> conditionFunctional, Object value){
-        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.GT, conditionFunctional, value));
+    public JoinQuery<T, E> gt(JoinConditionFunctional<E> joinConditionFunctional, Object value){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.GT, joinConditionFunctional, value));
+        return this;
+    }
+
+    /**
+     * 大于
+     * @param fromConditionFunctional
+     *        字段名
+     * @param joinConditionFunctional
+     *        值
+     * @return
+     */
+    public JoinQuery<T, E> gt(FromConditionFunctional<T> fromConditionFunctional, JoinConditionFunctional<E> joinConditionFunctional){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.GT, fromConditionFunctional, joinConditionFunctional));
         return this;
     }
 
@@ -394,6 +433,19 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
     }
 
     /**
+     * 大于等于
+     * @param fromConditionFunctional
+     *        字段名
+     * @param joinConditionFunctional
+     *        值
+     * @return
+     */
+    public JoinQuery<T, E> ge(FromConditionFunctional<T> fromConditionFunctional, JoinConditionFunctional<E> joinConditionFunctional){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.GE, fromConditionFunctional, joinConditionFunctional));
+        return this;
+    }
+
+    /**
      * 小于
      * @param fromConditionFunctional
      *        字段名
@@ -420,6 +472,19 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
     }
 
     /**
+     * 小于
+     * @param fromConditionFunctional
+     *        字段名
+     * @param joinConditionFunctional
+     *        值
+     * @return
+     */
+    public JoinQuery<T, E> lt(FromConditionFunctional<T> fromConditionFunctional, JoinConditionFunctional<E> joinConditionFunctional){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.LT, fromConditionFunctional, joinConditionFunctional));
+        return this;
+    }
+
+    /**
      * 小于等于
      * @param fromConditionFunctional
      *        字段名
@@ -442,6 +507,19 @@ public class JoinQuery<T, E> extends QueryBaseWrapper implements Serializable {
      */
     public JoinQuery<T, E> le(JoinConditionFunctional<E> joinConditionFunctional, Object value){
         this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.LE, joinConditionFunctional, value));
+        return this;
+    }
+
+    /**
+     * 小于等于
+     * @param fromConditionFunctional
+     *        字段名
+     * @param joinConditionFunctional
+     *        值
+     * @return
+     */
+    public JoinQuery<T, E> le(FromConditionFunctional<T> fromConditionFunctional, JoinConditionFunctional<E> joinConditionFunctional){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.LE, fromConditionFunctional, joinConditionFunctional));
         return this;
     }
 

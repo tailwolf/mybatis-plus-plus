@@ -2,6 +2,7 @@ package com.tailwolf.mybatis.core.dsl.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.tailwolf.mybatis.core.common.interceptor.BaseInterceptor;
+import com.tailwolf.mybatis.core.dsl.node.ConditionNode;
 import com.tailwolf.mybatis.core.util.ColumnModelUtil;
 import com.tailwolf.mybatis.core.util.ReflectionUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -142,12 +143,13 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             allColumnNameMap.putAll(fromFiledColumnNameMap);
             allColumnNameMap.putAll(joinFiledColumnNameMap);
             conditionsBuilder.montageOnConditions(dynamicContextMap, onConditionNodeIterator, allColumnNameMap);
+//            conditionsBuilder.montageJoinWhereConditions(dynamicContextMap, onConditionNodeIterator, allColumnNameMap);
 
-            NodeIterator whereConditionsQueue = joinQuery.getWhereConditionsQueue();
+            NodeIterator<ConditionNode> whereConditionsQueue = joinQuery.getWhereConditionsQueue();
             Map<String, Map<String, Object>> allFiledColumnMap = new HashMap<>();
             allFiledColumnMap.putAll(fromFiledColumnMap);
             allFiledColumnMap.putAll(joinFiledColumnMap);
-            conditionsBuilder.montageWhereConditions(dynamicContextMap, whereConditionsQueue, allFiledColumnMap, allColumnNameMap);
+            conditionsBuilder.montageJoinWhereConditions(dynamicContextMap, whereConditionsQueue, allColumnNameMap);
             conditionsBuilder.mapCondition(allFiledColumnMap, dynamicContextMap);
             conditionsBuilder.inOrNotIn(joinQuery.getInOrNotInNodeQueue(), dynamicContextMap, allColumnNameMap);
             conditionsBuilder.montageSelectNode(joinQuery.getSelectNodeQueue(), allColumnNameMap, fromObjectTableName);
@@ -228,11 +230,6 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             ReflectionUtil.setProperty(sqlSource, "sql", sql);
             ReflectionUtil.setProperty(dslWrapper, "parameterObject", dynamicContextMap);
             ReflectionUtil.setProperty(mappedStatement, "sqlSource", sqlSource);
-
-//            Object[] args = new Object[2];
-//            args[0] = mappedStatement;
-//            args[1] = dynamicContextMap;
-//            ReflectionUtil.setProperty(invocation, "args", args);
         }
         else{
             invocation.proceed();

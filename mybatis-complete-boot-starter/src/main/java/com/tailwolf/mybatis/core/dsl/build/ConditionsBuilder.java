@@ -191,38 +191,27 @@ public class ConditionsBuilder {
         }
 
         //判断是否应该加OR
-        else if(nodeIterator.isOr(nodeIterator)){
-            this.whereBuffer.append(MontageSqlConstant.OR);
-        }
+//        else if(nodeIterator.isOr(nodeIterator)){
+//            this.whereBuffer.append(MontageSqlConstant.OR);
+//        }
         //判断是否应该加AND
         else if(nodeIterator.isAnd(nodeIterator)){
             this.whereBuffer.append(MontageSqlConstant.AND);
         }
 
         Object filedNameObject = conditionNode.getFiledName();
-        String filedName = "";
-        String columnName = "";
-        Object templateName = "";
         Object value = conditionNode.getValue();
-        if(filedNameObject instanceof FromConditionFunctional){
-            columnName = filedColumnNameMap.get(tableFieldName((FromConditionFunctional)filedNameObject));
-            templateName = whereTemplateName(value, conditionNode.getConditionKeywork(), queryEntity);
-
-        }else if(filedNameObject instanceof JoinConditionFunctional){
-            columnName = filedColumnNameMap.get(tableFieldName((JoinConditionFunctional)filedNameObject));
-            templateName = whereTemplateName(value, conditionNode.getConditionKeywork(), queryEntity);
+        SerializedLambda lambda = SerializedLambdaUtil.getSerializedLambda((EntityConditionFunctional)filedNameObject);
+        String filedName = this.analyseGetterName(lambda.getImplMethodName());
+        String columnName = filedColumnNameMap.get(filedName);//数据库字段名
+        Object templateName = "";
+        if(MontageSqlConstant.LIKE.equals(conditionKeywork)){
+            templateName = "'" + value + "'";
+        }else if(MontageSqlConstant.IS.equals(conditionKeywork)){
+            templateName = value;
         } else{
-            SerializedLambda lambda = SerializedLambdaUtil.getSerializedLambda((EntityConditionFunctional)filedNameObject);
-            filedName = this.analyseGetterName(lambda.getImplMethodName());
-            columnName = filedColumnNameMap.get(filedName);//数据库字段名
-            if(MontageSqlConstant.LIKE.equals(conditionKeywork)){
-                templateName = "'" + value + "'";
-            }else if(MontageSqlConstant.IS.equals(conditionKeywork)){
-                templateName = value;
-            } else{
-                templateName = "#{" + filedName + "}";
-                ((Map)queryEntity).put(filedName, value);
-            }
+            templateName = "#{" + filedName + "}";
+            ((Map)queryEntity).put(filedName, value);
         }
 
         if(filedColumnMap.get(filedName) != null){
@@ -230,6 +219,12 @@ public class ConditionsBuilder {
         }
         this.whereBuffer.append(columnName).append(MontageSqlConstant.SPACE).append(conditionKeywork).append(templateName).append(MontageSqlConstant.SPACE);
         montageWhereConditions(queryEntity, nodeIterator.nextNonius(), filedColumnMap, filedColumnNameMap);
+    }
+
+    public void montageJoinWhereConditions(Object dynamicContextMap,
+                                       NodeIterator<ConditionNode> nodeIterator,
+                                       Map<String, String> filedColumnNameMap) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
+        montageConditions(this.whereBuffer, dynamicContextMap, nodeIterator, filedColumnNameMap);
     }
 
     /**
@@ -259,6 +254,83 @@ public class ConditionsBuilder {
         return templateName;
     }
 
+    private void montageConditions(StringBuffer buffer, Object dynamicContextMap,
+                                   NodeIterator<ConditionNode> nodeIterator,
+                                   Map<String, String> filedColumnNameMap) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        ConditionNode conditionNode = nodeIterator.currentNode();
+        //当前节点为空的时候，就是递归终止
+        if(conditionNode == null){
+            return;
+        }
+
+        String conditionKeywork = conditionNode.getConditionKeywork();
+        //如果是and_start
+        if(nodeIterator.isAndStart(conditionKeywork)){
+            //如果不是第一个节点，则应该应该先加AND再加左括号
+            if(!nodeIterator.isFirst()){
+                buffer.append(MontageSqlConstant.AND);
+            }
+            buffer.append(MontageSqlConstant.LEFT_BRACKET);
+            montageConditions(buffer, dynamicContextMap, nodeIterator.nextNonius(), filedColumnNameMap);
+            return;
+        }
+        //如果是or_start
+        if(nodeIterator.isOrStart(conditionKeywork)){
+            //如果不是第一个节点，则应该应该先加OR再加左括号
+            if(!nodeIterator.isFirst()){
+                buffer.append(MontageSqlConstant.OR);
+            }
+            this.whereBuffer.append(MontageSqlConstant.LEFT_BRACKET);
+            montageConditions(buffer, dynamicContextMap, nodeIterator.nextNonius(), filedColumnNameMap);
+            return;
+        }
+        //如果是右括号
+        else if(nodeIterator.isEnd(conditionKeywork)){
+            buffer.append(MontageSqlConstant.RIGHT_BRACKET);
+            montageConditions(buffer, dynamicContextMap, nodeIterator.nextNonius(), filedColumnNameMap);
+            return;
+        }
+
+        //判断or的类型
+        if(MontageSqlConstant.OR.equals(conditionKeywork) && conditionNode.getFiledName() == null && conditionNode.getValue() == null){
+            buffer.append(MontageSqlConstant.OR);
+            montageConditions(buffer, dynamicContextMap, nodeIterator.nextNonius(), filedColumnNameMap);
+            return;
+        }
+
+        //判断是否应该加OR
+        else if(nodeIterator.isOr(nodeIterator)){
+            buffer.append(MontageSqlConstant.OR);
+        }
+        //判断是否应该加AND
+        else if(nodeIterator.isAnd(nodeIterator)){
+            buffer.append(MontageSqlConstant.AND);
+        }
+
+        Object filedNameObject = conditionNode.getFiledName();
+        String filedName = "";
+        String columnName = "";
+        Object templateName = "";
+        Object value = conditionNode.getValue();
+        if(filedNameObject instanceof FromConditionFunctional && value instanceof JoinConditionFunctional){
+            columnName = filedColumnNameMap.get(tableFieldName((FromConditionFunctional)filedNameObject));
+            templateName = filedColumnNameMap.get(tableFieldName((JoinConditionFunctional)value));
+        }else if(filedNameObject instanceof FromConditionFunctional){
+            columnName = filedColumnNameMap.get(tableFieldName((FromConditionFunctional)filedNameObject));
+            templateName = whereTemplateName(value, conditionNode.getConditionKeywork(), dynamicContextMap);
+
+        }else {
+            columnName = filedColumnNameMap.get(tableFieldName((JoinConditionFunctional)filedNameObject));
+            templateName = whereTemplateName(value, conditionNode.getConditionKeywork(), dynamicContextMap);
+        }
+
+//        if(filedColumnMap.get(filedName) != null){
+//            filedColumnMap.remove(filedName);
+//        }
+        buffer.append(columnName).append(MontageSqlConstant.SPACE).append(conditionKeywork).append(templateName).append(MontageSqlConstant.SPACE);
+        montageConditions(buffer, dynamicContextMap, nodeIterator.nextNonius(), filedColumnNameMap);
+    }
+
     /**
      * 递归拼接on条件查询
      *        组装sql的可变字符串类
@@ -269,47 +341,21 @@ public class ConditionsBuilder {
      */
     public void montageOnConditions(Map<String, Object> dynamicContextMap, NodeIterator<ConditionNode> nodeIterator, Map<String, String> filedColumnNameMap) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
         ConditionNode conditionNode = nodeIterator.currentNode();
-        if(conditionNode == null){
-            return;
-        }
-        if(nodeIterator.isFirst()){
-            onBuffer.append(MontageSqlConstant.ON);
-        }else{
-            onBuffer.append(MontageSqlConstant.AND);
-        }
 
-        String conditionKeywork = conditionNode.getConditionKeywork();
-        Object filedNameObect = conditionNode.getFiledName();
-        String filedName;
-        if(filedNameObect instanceof FromConditionFunctional){
-            filedName = this.tableFieldName((FromConditionFunctional)filedNameObect);
-        }else{
-            filedName = this.tableFieldName((JoinConditionFunctional)filedNameObect);
+        if(conditionNode != null){
+            this.onBuffer.append(MontageSqlConstant.ON);
+            montageConditions(this.onBuffer, dynamicContextMap, nodeIterator, filedColumnNameMap);
         }
-
-        Object value = conditionNode.getValue();
-        if(value instanceof FromConditionFunctional){
-            String columnName = filedColumnNameMap.get(filedName);;
-            String columnTemplate = filedColumnNameMap.get(this.tableFieldName((FromConditionFunctional)value));
-            this.onBuffer.append(columnName).append(MontageSqlConstant.SPACE).append(conditionKeywork).append(columnTemplate).append(MontageSqlConstant.SPACE);
-        }else if(value instanceof JoinConditionFunctional){
-            String columnName = filedColumnNameMap.get(filedName);
-            String columnTemplate = filedColumnNameMap.get(this.tableFieldName((JoinConditionFunctional)value));
-            this.onBuffer.append(columnName).append(MontageSqlConstant.SPACE).append(conditionKeywork).append(columnTemplate).append(MontageSqlConstant.SPACE);
-        } else{
-            String columnName = filedColumnNameMap.get(filedName);
-            Object dynamicValue = value;
-            dynamicContextMap.put(columnName, dynamicValue);
-            if(MontageSqlConstant.LIKE.equals(conditionKeywork)){
-                value = "'" + value + "'";
-            }else if(!(value instanceof Number)){
-                value = "#{" + columnName + "}";
-            }
-            this.onBuffer.append(columnName).append(MontageSqlConstant.SPACE).append(conditionKeywork).append(value).append(MontageSqlConstant.SPACE);
-        }
-        montageOnConditions(dynamicContextMap, nodeIterator.nextNonius(), filedColumnNameMap);
     }
 
+    /**
+     * @param fn
+     * @return
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     private String tableFieldName(Serializable fn) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         SerializedLambda fromLambdaSeri = SerializedLambdaUtil.getSerializedLambda(fn);
         String fieldName = this.analyseGetterName(fromLambdaSeri.getImplMethodName());
