@@ -1,5 +1,5 @@
 ## 本框架定位
-mybatis-complete，顾名思义，即是对mybatis的补全。  
+mybatis-complete，顾名思义，即是对mybatis的完善和补充。  
 mybatis-complete没有改变任何mybatis的原生功能和配置，它的核心功能支持无sql双表查询和单表增删改查。  
 设计思想是，一两张表的简单操作封装成全自动orm，多表的复杂操作则应该发挥mybatis自身的优势。
 
@@ -56,4 +56,4 @@ List<SysUser> sysUserList = sysUserService.dslQuery(entityQuery);
 ```
 
 ## 使用文档
-使用文档可直接看mybatis-plus-plus-boot-starter-test下的[配置文件](https://github.com/tailwolf/mybatis-plus-plus/blob/0.x/mybatis-plus-plus-boot-starter-test/src/main/resources/application.yml)和[测试用例](https://github.com/tailwolf/mybatis-plus-plus/tree/0.x/mybatis-plus-plus-boot-starter-test/src/test/java/com/tailwolf/test/doc)
+使用文档可直接看mybatis-complete-boot-starter-test下的[配置文件](https://github.com/tailwolf/mybatis-complete/blob/0.x/mybatis-complete-boot-starter-test/src/main/resources/application.yml)和[测试用例](https://github.com/tailwolf/mybatis-complete/tree/0.x/mybatis-complete-boot-starter-test/src/test/java/com/tailwolf/test/doc)
