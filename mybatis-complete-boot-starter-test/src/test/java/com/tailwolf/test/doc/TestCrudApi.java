@@ -80,6 +80,7 @@ public class TestCrudApi {
      */
     @Test
     public void insertBatch(){
+
         List<SysUser> sysUserList = new ArrayList<>();
         for(int i = 1; i < 20; i++){
             SysUser sysUser = new SysUser();
