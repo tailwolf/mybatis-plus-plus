@@ -50,7 +50,8 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
             BaseWrapper dslWrapper = (BaseWrapper)paramMap.get("dslWrapper");
 
             dataSourceName = (String)ReflectionUtil.getProperty(dslWrapper, "dataSource");
-        }else{
+        }
+        if(StringUtils.isEmpty(dataSourceName)){
             //com.sun.proxy.$Proxy75.test(Unknown Source)
             String[] splitStr = mappedStatementId.split("\\.");
             //mapper接口类名
@@ -58,7 +59,7 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
             //mapper接口方法名
             String idMethodName = splitStr[splitStr.length-1];
             //mapper接口的代理方法全名
-            String middleMethodName = "com.sun.proxy.$Proxy75." + idMethodName;
+            String middleMethodNameReg = "com.sun.proxy.\\$Proxy\\d+." + idMethodName;
 
             //不要一看到类似go to的用法就觉得有问题，这里使用很适合
             StackTraceElement[] stackArray = Thread.currentThread().getStackTrace();
@@ -71,7 +72,7 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
                 //调用栈的方法全名
                 String declareMethodName = className + "." + methodName;
 
-                if(declareMethodName.equals(middleMethodName)){
+                if(declareMethodName.matches(middleMethodNameReg)){
                     Class<?> idClass = Class.forName(idClassName);
                     Method[] declaredMethods = idClass.getDeclaredMethods();
                     for(Method method: declaredMethods){
