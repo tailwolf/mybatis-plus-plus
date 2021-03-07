@@ -41,7 +41,6 @@ public class EntityUpdate<T> extends UpdateBaseWrapper<T> {
 
     public EntityUpdate<T> setEntity(T entity) {
         this.entity = entity;
-        this.setProxyEntity(this);
         return this;
     }
 
@@ -271,10 +270,6 @@ public class EntityUpdate<T> extends UpdateBaseWrapper<T> {
 
     public void setCondition(Condition<T> condition) {
         this.condition = condition;
-    }
-
-    public T getProxyEntity() {
-        return proxyEntity;
     }
 
 //    public NodeIterator<ConditionNode> getWhereConditionsQueue() {

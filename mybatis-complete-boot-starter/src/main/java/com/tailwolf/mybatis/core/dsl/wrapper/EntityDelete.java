@@ -32,7 +32,6 @@ public class EntityDelete<T> extends UpdateBaseWrapper<T> {
 
     public EntityDelete<T> setEntity(T entity) {
         this.entity = entity;
-        this.setProxyEntity(this);
         return this;
     }
 
@@ -256,10 +255,6 @@ public class EntityDelete<T> extends UpdateBaseWrapper<T> {
 
     public void setCondition(Condition<T> condition) {
         this.condition = condition;
-    }
-
-    public T getProxyEntity() {
-        return proxyEntity;
     }
 
     public NodeIterator<ConditionNode> getWhereConditionsQueue() {

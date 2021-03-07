@@ -2,9 +2,7 @@ package com.tailwolf.mybatis.core.dsl.wrapper;
 
 import com.tailwolf.mybatis.constant.MontageSqlConstant;
 import com.tailwolf.mybatis.core.dsl.functional.create.CreateObjectInterface;
-import com.tailwolf.mybatis.core.dsl.functional.where.Condition;
 import com.tailwolf.mybatis.core.dsl.wrapper.base.QueryBaseWrapper;
-import com.tailwolf.mybatis.core.dsl.wrapper.base.UpdateBaseWrapper;
 import com.tailwolf.mybatis.core.dsl.functional.group.join.JoinGroupBy;
 import com.tailwolf.mybatis.core.dsl.functional.group.join.JoinGroupByInterface;
 import com.tailwolf.mybatis.core.dsl.functional.having.join.JoinHaving;
@@ -20,7 +18,6 @@ import com.tailwolf.mybatis.core.dsl.functional.where.join.JoinConditionInterfac
 import com.tailwolf.mybatis.core.dsl.iterator.NodeIterator;
 import com.tailwolf.mybatis.paging.Limiter;
 import com.tailwolf.mybatis.core.dsl.node.*;
-import com.tailwolf.mybatis.core.proxy.CommonQueryHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;

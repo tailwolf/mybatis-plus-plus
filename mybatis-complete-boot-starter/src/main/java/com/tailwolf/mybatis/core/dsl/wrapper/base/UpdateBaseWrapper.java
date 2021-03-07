@@ -2,16 +2,12 @@ package com.tailwolf.mybatis.core.dsl.wrapper.base;
 
 import com.tailwolf.mybatis.constant.MontageSqlConstant;
 import com.tailwolf.mybatis.core.dsl.ConditionInterface;
-import com.tailwolf.mybatis.core.dsl.wrapper.EntityQuery;
-import net.sf.cglib.proxy.Enhancer;
 import com.tailwolf.mybatis.core.dsl.functional.where.Condition;
 import com.tailwolf.mybatis.core.dsl.iterator.NodeIterator;
 import com.tailwolf.mybatis.core.dsl.node.ConditionNode;
 import com.tailwolf.mybatis.core.dsl.node.ExistsOrNotExistsNode;
 import com.tailwolf.mybatis.core.dsl.node.InOrNotInNode;
 import com.tailwolf.mybatis.core.dsl.node.OrderByNode;
-import com.tailwolf.mybatis.core.proxy.CommonQueryHandler;
-import com.tailwolf.mybatis.core.util.ReflectionUtil;
 
 import java.util.*;
 
@@ -22,8 +18,6 @@ import java.util.*;
  */
 public abstract class UpdateBaseWrapper<T>  extends BaseWrapper {
     protected T entity;
-
-    protected T proxyEntity;
 
     protected Condition<T> condition = new Condition<>();
 
@@ -45,14 +39,6 @@ public abstract class UpdateBaseWrapper<T>  extends BaseWrapper {
      * 排序队列
      */
     private NodeIterator<OrderByNode> orderConditionsQueue = new NodeIterator<>();
-
-    protected void setProxyEntity(Object subInstance){
-        Object property = ReflectionUtil.getProperty(subInstance, "entity");
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(property.getClass());
-        enhancer.setCallback(CommonQueryHandler.getInterceptor());
-        this.proxyEntity = (T)enhancer.create();
-    }
 
     public void orCondition(ConditionInterface<T> conditionInterface){
         conditionInterface.condition(this.condition);
@@ -118,9 +104,5 @@ public abstract class UpdateBaseWrapper<T>  extends BaseWrapper {
 
     public T getEntity() {
         return entity;
-    }
-
-    public T getProxyEntity() {
-        return proxyEntity;
     }
 }

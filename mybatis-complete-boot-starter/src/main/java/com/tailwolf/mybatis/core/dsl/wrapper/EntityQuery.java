@@ -1,7 +1,6 @@
 package com.tailwolf.mybatis.core.dsl.wrapper;
 
 import com.tailwolf.mybatis.core.dsl.wrapper.base.QueryBaseWrapper;
-import net.sf.cglib.proxy.Enhancer;
 import com.tailwolf.mybatis.constant.MontageSqlConstant;
 import com.tailwolf.mybatis.core.dsl.ConditionInterface;
 import com.tailwolf.mybatis.core.exception.MybatisCompleteRuntimeException;
@@ -15,8 +14,6 @@ import com.tailwolf.mybatis.core.dsl.functional.where.EntityConditionFunctional;
 import com.tailwolf.mybatis.core.dsl.iterator.NodeIterator;
 import com.tailwolf.mybatis.paging.Limiter;
 import com.tailwolf.mybatis.core.dsl.node.*;
-import com.tailwolf.mybatis.core.proxy.CommonQueryHandler;
-import com.tailwolf.mybatis.core.util.ReflectionUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -45,8 +42,6 @@ public class EntityQuery<T> extends QueryBaseWrapper implements Serializable {
 
     private Condition<T> condition = new Condition<>();
 
-    private T proxyEntity;
-
     private NodeIterator<SelectNode> selectNodeQueue = new NodeIterator<>();
 
     private NodeIterator<GroupByNode> groupByNodeQueue = new NodeIterator<>();
@@ -68,12 +63,6 @@ public class EntityQuery<T> extends QueryBaseWrapper implements Serializable {
 
     public EntityQuery<T> setEntity(T entity) {
         this.entity = entity;
-
-        Object property = ReflectionUtil.getProperty(this, "entity");
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(property.getClass());
-        enhancer.setCallback(CommonQueryHandler.getInterceptor());
-        this.proxyEntity = (T)enhancer.create();
         return this;
     }
 
@@ -395,14 +384,6 @@ public class EntityQuery<T> extends QueryBaseWrapper implements Serializable {
     @Override
     public Limiter createLimiter() {
         return new Limiter(currentPage, pageSize);
-    }
-
-    public T getProxyEntity() {
-        return proxyEntity;
-    }
-
-    public void setProxyEntity(T proxyEntity) {
-        this.proxyEntity = proxyEntity;
     }
 
     public NodeIterator<SelectNode> getSelectNodeQueue() {

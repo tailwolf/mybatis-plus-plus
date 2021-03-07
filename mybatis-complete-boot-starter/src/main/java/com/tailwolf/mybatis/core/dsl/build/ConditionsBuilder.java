@@ -651,12 +651,6 @@ public class ConditionsBuilder {
         }
     }
 
-    private String getFiledName(){
-        String filedName = FiledNameThreadLocalUtil.getValue();
-        FiledNameThreadLocalUtil.removeValue();
-        return filedName;
-    }
-
     //TODO:此处代码需要优化
     public StringBuffer build() {
 
