@@ -36,7 +36,6 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
         this.methodCache = methodCache;
     }
 
-    //TODO，代码需要优化
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
         Type[] genericInterfaces = mapperInterface.getGenericInterfaces();
@@ -57,7 +56,7 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
                     String fieldName = field.getName();
                     boolean pk = columnModel.isPk();
 
-                    if(pk){//是否主键
+                    if(pk){
                         ReflectionUtil.setProperty(entity, fieldName, arg);
                         args[0] = entity;
                         break;
@@ -70,8 +69,7 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
                 Collection collection = (Collection)arg;
                 Class<?> clazz = null;
                 String pkFieldName = null;
-                for(Object obj: collection){
-                    String name = obj.getClass().getName();
+                end: for(Object obj: collection){
                     if(!className.equals(obj.getClass().getName())){
                         clazz = Class.forName(className);
                         List<Field> allFields = ReflectionUtil.getAllFields(clazz);
@@ -82,12 +80,11 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
                             String fieldName = field.getName();
                             boolean pk = columnModel.isPk();
 
-                            if(pk){//是否主键
+                            if(pk){
                                 pkFieldName = fieldName;
-                                break;
+                                break end;
                             }
                         }
-                        break;
                     }
                 }
 

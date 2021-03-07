@@ -92,7 +92,7 @@ public class ExecutorProxy implements MethodInterceptor {
         }else if("query".equals(name) && args.length == 6){
             args[4] = this.cacheKey;
             args[5] = this.boundSql;
-            return methodProxy.invokeSuper(cglibExecutor, args);
+//            return methodProxy.invokeSuper(cglibExecutor, args);
         }
         /**
          * 这里代理getConnection重新生成了mybayis++自己写的ConnectionLogger，而不要mybatis的org.apache.ibatis.logging.jdbc.ConnectionLogger

@@ -23,8 +23,7 @@ public class ReflectionUtil {
      */
     public static Object getProperty(Object obj, String name){
         Class<?> clazz = obj.getClass();
-        Object value = null;
-        return getProperty(clazz, obj, value, name);
+        return getProperty(clazz, obj, name);
     }
 
     /**
@@ -35,11 +34,12 @@ public class ReflectionUtil {
      * @param name
      * @return
      */
-    private static Object getProperty(Class<?> clazz, Object obj, Object value, String name){
+    private static Object getProperty(Class<?> clazz, Object obj, String name){
         if(clazz == null){
             return null;
         }
 
+        Object value = null;
         Field[] declaredFields = clazz.getDeclaredFields();
         for(Field field: declaredFields){
             if(field.getName().equals(name)){
@@ -57,7 +57,7 @@ public class ReflectionUtil {
             return value;
         }
         Class<?> superclass = clazz.getSuperclass();
-        return getProperty(superclass, obj, value, name);
+        return getProperty(superclass, obj, name);
     }
 
     /**
@@ -103,16 +103,16 @@ public class ReflectionUtil {
     /**
      * 保留拥有特定注解的Field
      * @param fields
-     * @param clazz
+     * @param annotationClass
      */
-    public static Field[] retainFieldByAnnotation(Field[] fields, Class clazz){
+    public static Field[] retainFieldByAnnotation(Field[] fields, Class annotationClass){
         List<Field> fieldList = new ArrayList<>();
         for(Field field: fields){
             Annotation[] annotations = field.getAnnotations();
             for(int i = 0; i < annotations.length; i++){
                 Annotation annotation = annotations[i];
                 Class<? extends Annotation> annotationClazz = annotation.annotationType();
-                if(clazz.getName().equals(annotationClazz.getName())){
+                if(annotationClass.getName().equals(annotationClazz.getName())){
                     fieldList.add(field);
                     break;
                 }
