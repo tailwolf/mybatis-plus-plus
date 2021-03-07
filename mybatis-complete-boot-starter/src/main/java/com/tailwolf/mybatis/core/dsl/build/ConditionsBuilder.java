@@ -652,7 +652,7 @@ public class ConditionsBuilder {
     }
 
     //TODO:此处代码需要优化
-    public StringBuffer build() {
+    public StringBuffer build(Map<String, String> columnNameMap) {
 
         String selectColumnStr = this.selectColumnBuffer.toString();
         String selectTableStr = this.selectTableBuffer.toString();
@@ -677,7 +677,14 @@ public class ConditionsBuilder {
         }
         else{
             if(MontageSqlConstant.SELECT.equals(selectColumnStr)){
-                selectColumnStr = selectColumnStr + MontageSqlConstant.STAR_KEY;
+                List<String> select = new ArrayList<>();
+                Set<Map.Entry<String, String>> entries = columnNameMap.entrySet();
+                for(var entity: entries){
+                    select.add(entity.getValue() + " as " + entity.getValue().replace(".", "_"));
+//                    select.add(entity.getValue());
+                }
+                selectColumnStr = selectColumnStr + StringUtils.join(select, ", ");
+//                selectColumnStr = selectColumnStr + MontageSqlConstant.STAR_KEY;
             }
             sqlBuffer.append(selectColumnStr);
             sqlBuffer.append(selectTableStr);

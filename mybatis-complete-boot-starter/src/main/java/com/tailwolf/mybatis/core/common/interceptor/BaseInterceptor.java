@@ -46,6 +46,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * mybatis拦截器的基础类，用来复用方法
@@ -99,12 +100,13 @@ public class BaseInterceptor {
      * @param columnModelList
      * @param resultMapBuffer
      */
-    protected void montageResultLable(List<ColumnModel> columnModelList, StringBuffer resultMapBuffer){
-        Map<String, String> filedColumnMap = getFiledColumnNameMap(columnModelList, null, null);
+    protected void montageResultLable(List<ColumnModel> columnModelList, StringBuffer resultMapBuffer, AtomicInteger tableIndex){
+        Map<String, String> filedColumnMap = getFiledColumnNameMap(columnModelList, "t" + tableIndex, null);
         for(var entry: filedColumnMap.entrySet()){
-            String columnName = entry.getKey();
-            String filedName = entry.getValue();
-            resultMapBuffer.append("<result column=\"").append(filedName).append("\" property=\"").append(columnName).append("\"/>");
+            String filedName = entry.getKey();
+            String columnName = entry.getValue();
+            columnName = columnName.replace(".", "_");
+            resultMapBuffer.append("<result column=\"").append(columnName).append("\" property=\"").append(filedName).append("\"/>");
         }
     }
 
@@ -121,7 +123,7 @@ public class BaseInterceptor {
      * @throws IOException
      * @throws InvocationTargetException
      */
-    protected void montageSubObject(String labelType, Field field, StringBuffer resultMapBuffer, Configuration configuration, String type, Class annotationClazz) throws IllegalAccessException, NoSuchMethodException, IOException, InvocationTargetException {
+    protected void montageSubObject(String labelType, Field field, StringBuffer resultMapBuffer, Configuration configuration, String type, Class annotationClazz, AtomicInteger tableIndex) throws IllegalAccessException, NoSuchMethodException, IOException, InvocationTargetException {
         String name = field.getName();
         Annotation annotation = field.getAnnotation(annotationClazz);
 
@@ -137,10 +139,11 @@ public class BaseInterceptor {
         resultMapBuffer.append("<").append(labelType).append(" property=\"").append(name).append("\" ").append(type).append("=\"").append(collectionClazz.getName()).append("\">");
         List<Field> filedList = ReflectionUtil.getAllFields(collectionClazz);
         List<ColumnModel> columnModelList = ColumnModelUtil.createColumnModel(filedList, new ArrayList<>());
-        montageResultLable(columnModelList, resultMapBuffer);
+        tableIndex.set(tableIndex.incrementAndGet());
+        montageResultLable(columnModelList, resultMapBuffer, tableIndex);
         resultMapBuffer.append("</").append(labelType).append(">");
 
-        createResultMap(collectionClazz, configuration, resultMapBuffer);
+        createResultMap(collectionClazz, configuration, resultMapBuffer, tableIndex);
     }
 
     /**
@@ -154,6 +157,7 @@ public class BaseInterceptor {
      * @throws InvocationTargetException
      */
     protected ResultMap createResultMap(MapperMethod.ParamMap<?> paramMap, Configuration configuration) throws IllegalAccessException, IOException, NoSuchMethodException, InvocationTargetException {
+        AtomicInteger tableIndex = new AtomicInteger(1);
         StringBuffer resultMapBuffer = new StringBuffer();
         Class<?> returnEntity = (Class<?>)paramMap.get("returnEntity");
         resultMapBuffer.append("<resultMap type=\"").append(returnEntity.getName()).append("\" id=\"");
@@ -162,8 +166,8 @@ public class BaseInterceptor {
 
         List<Field> fieldList = ReflectionUtil.getAllFields(returnEntity);
         List<ColumnModel> columnModelList = ColumnModelUtil.createColumnModel(fieldList, List.of(Association.class, Collection.class));
-        montageResultLable(columnModelList, resultMapBuffer);
-        createResultMap(returnEntity, configuration, resultMapBuffer);
+        montageResultLable(columnModelList, resultMapBuffer, tableIndex);
+        createResultMap(returnEntity, configuration, resultMapBuffer, tableIndex);
         resultMapBuffer.append("</resultMap>");
 
         String doc = "<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">"
@@ -190,7 +194,7 @@ public class BaseInterceptor {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      */
-    protected void createResultMap(Class clazz, Configuration configuration, StringBuffer resultMapBuffer) throws IllegalAccessException, IOException, NoSuchMethodException, InvocationTargetException {
+    protected void createResultMap(Class clazz, Configuration configuration, StringBuffer resultMapBuffer, AtomicInteger tableIndex) throws IllegalAccessException, IOException, NoSuchMethodException, InvocationTargetException {
         List<Field> fileds = ReflectionUtil.getAllFields(clazz);
         if(CollectionUtil.isEmtpy(fileds)){
             return;
@@ -199,13 +203,13 @@ public class BaseInterceptor {
         Field[] associationFileds = ReflectionUtil.getFileds(clazz, Association.class);
         if(associationFileds != null && associationFileds.length > 0){
             for(Field field: associationFileds){
-                montageSubObject("association", field, resultMapBuffer, configuration, "javaType", Association.class);
+                montageSubObject("association", field, resultMapBuffer, configuration, "javaType", Association.class, tableIndex);
             }
         }
         Field[] collectionFileds = ReflectionUtil.getFileds(clazz, Collection.class);
         if(collectionFileds != null && collectionFileds.length > 0){
             for(Field field: collectionFileds){
-                montageSubObject("collection", field, resultMapBuffer, configuration, "ofType", Collection.class);
+                montageSubObject("collection", field, resultMapBuffer, configuration, "ofType", Collection.class, tableIndex);
             }
         }
     }

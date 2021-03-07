@@ -142,6 +142,7 @@ public class TestCrudApi {
     public void findList(){
         SysUser sysUser = new SysUser();
         sysUser.setUserName("userName7");
+        sysUser.setUserPwd("userPwd");
         System.out.println(JSON.toJSONString(sysUserService.findList(sysUser)));
     }
     /**

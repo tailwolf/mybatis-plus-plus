@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode()
 public class TaskVo implements Serializable {
+    //主键id
+    private Integer id;
+
     //任务名称
     private String taskName;
 

@@ -94,7 +94,7 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             DynamicContext context = new DynamicContext(configuration, filedColumnNameMap);
             SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
             Class<?> parameterType = dynamicContextMap.getClass();
-            String sql = conditionsBuilder.build().toString();
+            String sql = conditionsBuilder.build(null).toString();
             sqlSource = sqlSourceParser.parse(sql, parameterType, context.getBindings());
             sql = (String)ReflectionUtil.getProperty(sqlSource, "sql");
             sql = this.structureLogicDelete(mappedStatement.getSqlCommandType(), entity,
@@ -161,7 +161,7 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             DynamicContext context = new DynamicContext(configuration, dynamicContextMap);
             SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
             Class<?> parameterType = dynamicContextMap.getClass();
-            String sql = conditionsBuilder.build().toString();
+            String sql = conditionsBuilder.build(allColumnNameMap).toString();
             sqlSource = sqlSourceParser.parse(sql, parameterType, context.getBindings());
             sql = (String)ReflectionUtil.getProperty(sqlSource, "sql");
             sql = this.structureLogicDelete(mappedStatement.getSqlCommandType(), fromObject,
@@ -217,7 +217,7 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             conditionsBuilder.mapCondition(filedColumnMap, dynamicContextMap);
             conditionsBuilder.inOrNotIn(updateBaseWrapper.getInOrNotInNodeQueue(), dynamicContextMap, columnNameMap);
             conditionsBuilder.existsOrNotExists(updateBaseWrapper.getExistOrNotExistQueue(), dynamicContextMap);
-            String sql = conditionsBuilder.build().toString();
+            String sql = conditionsBuilder.build(null).toString();
 
             DynamicContext context = new DynamicContext(configuration, dynamicContextMap);
             SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
