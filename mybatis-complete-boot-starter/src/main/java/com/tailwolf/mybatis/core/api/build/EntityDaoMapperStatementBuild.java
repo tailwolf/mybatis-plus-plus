@@ -30,25 +30,25 @@ public class EntityDaoMapperStatementBuild extends MappedStatementBuild {
         XNode xNode;
         for(String daoMapper: daoMapperList){
             if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.insert".equals(daoMapper)){
-                xNode = insert(daoMapper, configuration);
+                xNode = insert(daoMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.updateByPk".equals(daoMapper)){
-                xNode = updateByPk(daoMapper, configuration);
+                xNode = updateByPk(daoMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.deleteBatchByPk".equals(daoMapper)){
-                xNode = deleteBatchByPk(daoMapper, configuration);
+                xNode = deleteBatchByPk(daoMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.deleteByPk".equals(daoMapper)){
-                xNode = deleteByPk(daoMapper, configuration);
+                xNode = deleteByPk(daoMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.delete".equals(daoMapper)){
-                xNode = delete(daoMapper, configuration);
+                xNode = delete(daoMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.findList".equals(daoMapper)){
-                xNode = findList(daoMapper, configuration);
+                xNode = findList(daoMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.findOne".equals(daoMapper)){
-                xNode = findList(daoMapper, configuration);
+                xNode = findList(daoMapper);
             }
             else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.findByPk".equals(daoMapper)){
-                xNode = findByPk(daoMapper, configuration);
+                xNode = findByPk(daoMapper);
             }
             else{
-                xNode = updateBatchByPk(daoMapper, configuration);
+                xNode = updateBatchByPk(daoMapper);
             }
             MappedStatement mappedStatement = this.getMappedStatement(daoMapper, xNode);
             mappedStatementMap.put(daoMapper, mappedStatement);

@@ -6,6 +6,7 @@ import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.ognl.Node;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.parsing.XPathParser;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
@@ -51,12 +52,11 @@ public abstract class MappedStatementBuild {
     /**
      * 生成通过主键查询实体类的XNode
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    protected XNode findByPk(String method, Configuration configuration) throws IOException, ClassNotFoundException {
+    protected XNode findByPk(String method) throws IOException, ClassNotFoundException {
         List<ColumnModel> columnModelList = this.getColumnModelList();
         if(CollectionUtil.isEmtpy(columnModelList)){
             throw new MybatisCompleteRuntimeException("实体类必须要有属性！");
@@ -76,19 +76,17 @@ public abstract class MappedStatementBuild {
             }
         }
         buffer.append("</select>");
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", buffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("select");
+
+        return parserXNode(buffer.toString(), "select");
     }
 
     /**
      * 生成查询实体类列表的XNode
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode findList(String method, Configuration configuration) throws IOException {
+    protected XNode findList(String method) throws IOException {
         List<ColumnModel> columnModelList = this.getColumnModelList();
         StringBuffer buffer = new StringBuffer();
         buffer.append("<select id=\"").append(method).append("\" resultType=\"").append(this.entityClazz.getName()).append("\">");
@@ -105,73 +103,61 @@ public abstract class MappedStatementBuild {
         buffer.append("</where>");
         buffer.append("</select>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", buffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("select");
+        return parserXNode(buffer.toString(), "select");
     }
 
     /**
      * 生成删除dsl操作的XNode，该节点并不是最终形态，会在dsl拦截器里拼接真正的sql
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode dslDelete(String method, Configuration configuration) throws IOException {
+    protected XNode dslDelete(String method) throws IOException {
         StringBuffer sqlTagBuffer = new StringBuffer();
         sqlTagBuffer.append("<delete id=\"").append(method).append("\"").append(">");
         sqlTagBuffer.append("delete * from ").append(this.getTableName());
         sqlTagBuffer.append("</delete>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", sqlTagBuffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("delete");
+        return parserXNode(sqlTagBuffer.toString(), "delete");
     }
 
     /**
      * 生成更新dsl操作的XNode，该节点并不是最终形态，会在dsl拦截器里拼接真正的sql
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode dslUpdate(String method, Configuration configuration) throws IOException {
+    protected XNode dslUpdate(String method) throws IOException {
         StringBuffer sqlTagBuffer = new StringBuffer();
         sqlTagBuffer.append("<update id=\"").append(method).append("\"").append(">");
         sqlTagBuffer.append("update ").append(this.getTableName());
         sqlTagBuffer.append("</update>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", sqlTagBuffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("update");
+        return parserXNode(sqlTagBuffer.toString(), "update");
     }
 
     /**
      * 生成查询dsl操作的XNode，该节点并不是最终形态，会在dsl拦截器里拼接真正的sql
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode dslQuery(String method, Configuration configuration) throws IOException {
+    protected XNode dslQuery(String method) throws IOException {
         StringBuffer sqlTagBuffer = new StringBuffer();
         sqlTagBuffer.append("<select id=\"").append(method).append("\"").append(">");
         sqlTagBuffer.append("select * from").append(this.getTableName());
         sqlTagBuffer.append("</select>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", sqlTagBuffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("select");
+        return parserXNode(sqlTagBuffer.toString(), "select");
     }
 
     /**
      * 生成通过主键批量删除的XNode
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode deleteBatchByPk(String method, Configuration configuration) throws IOException {
+    protected XNode deleteBatchByPk(String method) throws IOException {
         List<ColumnModel> columnModelList = this.getColumnModelList();
         String pkName = "";
         String pkColumn = "";
@@ -198,19 +184,16 @@ public abstract class MappedStatementBuild {
         buffer.append("</foreach>");
         buffer.append("</delete>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", buffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, this.configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("delete");
+        return parserXNode(buffer.toString(), "delete");
     }
 
     /**
      * 生成删除的XNode
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode delete(String method, Configuration configuration) throws IOException {
+    protected XNode delete(String method) throws IOException {
 
         StringBuffer buffer = new StringBuffer();
         buffer.append("<delete id=\"").append(method).append(this.entityClazz.getName()).append("\">");
@@ -228,19 +211,16 @@ public abstract class MappedStatementBuild {
         buffer.append("</where>");
         buffer.append("</delete>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", buffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("delete");
+        return parserXNode(buffer.toString(), "delete");
     }
 
     /**
      * 生成通过主键删除的XNode
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode deleteByPk(String method, Configuration configuration) throws IOException {
+    protected XNode deleteByPk(String method) throws IOException {
         String pkName = "";
         String pkColumn = "";
         List<ColumnModel> columnModelList = this.getColumnModelList();
@@ -266,19 +246,16 @@ public abstract class MappedStatementBuild {
         buffer.append("</where>");
         buffer.append("</delete>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", buffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, this.configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("delete");
+        return parserXNode(buffer.toString(), "delete");
     }
 
     /**
      * 生成通过主键更新的XNode
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode updateByPk(String method, Configuration configuration) throws IOException {
+    protected XNode updateByPk(String method) throws IOException {
         StringBuffer buffer = new StringBuffer();
         buffer.append("<update id=\"").append(method).append("\">");
 
@@ -307,19 +284,16 @@ public abstract class MappedStatementBuild {
         buffer.append("where ").append(pkColumn).append(" = #{").append(pkName).append("}");
         buffer.append("</update>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", buffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, this.configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("update");
+        return parserXNode(buffer.toString(), "update");
     }
 
     /**
      * 生成通过主键批量更新的XNode
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode updateBatchByPk(String method, Configuration configuration) throws IOException {
+    protected XNode updateBatchByPk(String method) throws IOException {
         StringBuffer buffer = new StringBuffer();
         buffer.append("<update").append(" ").append("id = ").append("\"").append(method).append("\"").append(">");
         buffer.append("update").append(" ").append(this.getTableName());
@@ -353,19 +327,16 @@ public abstract class MappedStatementBuild {
         buffer.append("#{item.").append(pkName).append("}");
         buffer.append("</foreach>").append(")</update>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", buffer.toString()).getBytes(), "");
-        XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, this.configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("update");
+        return parserXNode(buffer.toString(), "update");
     }
 
     /**
      * 生成插入的XNode
      * @param method
-     * @param configuration
      * @return
      * @throws IOException
      */
-    protected XNode insert(String method, Configuration configuration) throws IOException {
+    protected XNode insert(String method) throws IOException {
         List<ColumnModel> columnModelList = this.getColumnModelList();
         StringBuilder columnsBuffer = new StringBuilder();
         StringBuilder fieldsBuffer = new StringBuilder();
@@ -396,12 +367,13 @@ public abstract class MappedStatementBuild {
         buffer.append("(").append("<trim suffixOverrides=\",\">").append(fieldsBuffer.toString()).append("</trim>").append(")");
         buffer.append("</insert>");
 
-        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", buffer.toString()).getBytes());
-//        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(resource.getInputStream(),
-//                configuration, resource.toString(), configuration.getSqlFragments());
-//        xmlMapperBuilder.parse();
+        return parserXNode(buffer.toString(), "insert");
+    }
+
+    private XNode parserXNode(String sql, String sqlType) throws IOException {
+        Resource resource = new ByteArrayResource(doc.replace("$sqlTag$", sql).getBytes(), "");
         XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, this.configuration.getVariables(), new XMLMapperEntityResolver());
-        return xPathParser.evalNode("/mapper").evalNode("insert");
+        return xPathParser.evalNode("/mapper").evalNode(sqlType);
     }
 
     /**

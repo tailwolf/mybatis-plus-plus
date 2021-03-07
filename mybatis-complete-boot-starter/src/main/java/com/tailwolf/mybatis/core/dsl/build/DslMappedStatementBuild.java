@@ -29,15 +29,15 @@ public class DslMappedStatementBuild extends MappedStatementBuild {
         XNode xNode;
         for(String dslMapper: dslMapperList){
             if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.dslQuery".equals(dslMapper)){
-                xNode = this.dslQuery(dslMapper, configuration);
+                xNode = this.dslQuery(dslMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.dslQueryOne".equals(dslMapper)){
-                xNode = this.dslQuery(dslMapper, configuration);
+                xNode = this.dslQuery(dslMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.dslDelete".equals(dslMapper)){
-                xNode = this.dslDelete(dslMapper, configuration);
+                xNode = this.dslDelete(dslMapper);
             }else if("com.tailwolf.mybatis.core.common.dao.DslOptMapper.joinQuery".equals(dslMapper)){
-                xNode = this.dslQuery(dslMapper, configuration);
+                xNode = this.dslQuery(dslMapper);
             } else{
-                xNode = this.dslUpdate(dslMapper, configuration);
+                xNode = this.dslUpdate(dslMapper);
             }
             MappedStatement mappedStatement = this.getMappedStatement(dslMapper, xNode);
             mappedStatementMap.put(dslMapper, mappedStatement);

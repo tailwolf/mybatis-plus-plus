@@ -32,7 +32,7 @@ public class EntityCrudStatementBuild extends MappedStatementBuild {
         //插入实体类
         String id = typeName + "." + "insert";
         ENTITY_CRUD_ID_SET.add(id);
-        XNode Node = insert(id, configuration);
+        XNode Node = insert(id);
         MappedStatement insertEntityMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, insertEntityMappedStatement);
 //        //批量插入实体类
@@ -44,49 +44,49 @@ public class EntityCrudStatementBuild extends MappedStatementBuild {
         //通过主键更新实体类
         id = typeName + "." + "updateByPk";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = updateByPk(id, configuration);
+        Node = updateByPk(id);
         MappedStatement updateByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, updateByPkMappedStatement);
         //通过主键批量删除
         id = typeName + "." + "deleteBatchByPk";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = deleteBatchByPk(id, configuration);
+        Node = deleteBatchByPk(id);
         MappedStatement deleteBatchByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, deleteBatchByPkMappedStatement);
         //通过主键删除
         id = typeName + "." + "deleteByPk";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = deleteByPk(id, configuration);
+        Node = deleteByPk(id);
         MappedStatement deleteByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, deleteByPkMappedStatement);
         //通过实体类删除
         id = typeName + "." + "delete";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = delete(id, configuration);
+        Node = delete(id);
         MappedStatement deleteMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, deleteMappedStatement);
         //通过实体类查询列表
         id = typeName + "." + "findList";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = findList(id, configuration);
+        Node = findList(id);
         MappedStatement getListMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, getListMappedStatement);
         //通过主键查询实体类
         id = typeName + "." + "findByPk";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = findByPk(id, configuration);
+        Node = findByPk(id);
         MappedStatement findByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, findByPkMappedStatement);
         //通过实体类查询一个实体类
         id = typeName + "." + "findOne";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = findList(id, configuration);
+        Node = findList(id);
         MappedStatement findOneMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, findOneMappedStatement);
         //通过主键批量更新
         id = typeName + "." + "updateBatchByPk";
         ENTITY_CRUD_ID_SET.add(id);
-        Node = updateBatchByPk(id, configuration);
+        Node = updateBatchByPk(id);
         MappedStatement updateBatchByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, updateBatchByPkMappedStatement);
         return mappedStatementMap;
