@@ -81,8 +81,8 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             Map<String, Map<String, Object>> filedColumnMap = this.getFiledColumnMap(annotateColumnModelList, entity, null, null);
             Map<String, String> filedColumnNameMap = this.getFiledColumnNameMap(annotateColumnModelList, null, null);
 
-            ConditionsBuilder conditionsBuilder = new ConditionsBuilder(entiryQuery, tableName);
-            conditionsBuilder.montageSelectNode(entiryQuery.getSelectNodeQueue(), null, null);
+            ConditionsBuilder conditionsBuilder = new ConditionsBuilder(tableName);
+            conditionsBuilder.montageSingleSelectNode(entiryQuery.getSelectNodeQueue(), filedColumnNameMap, null);
             conditionsBuilder.montageWhereConditions(dynamicContextMap, entiryQuery.getWhereConditionsQueue(), filedColumnMap, filedColumnNameMap);
             conditionsBuilder.mapCondition(filedColumnMap, dynamicContextMap);
             conditionsBuilder.inOrNotIn(entiryQuery.getInOrNotInNodeQueue(), dynamicContextMap, filedColumnNameMap);
@@ -94,7 +94,7 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             DynamicContext context = new DynamicContext(configuration, filedColumnNameMap);
             SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
             Class<?> parameterType = dynamicContextMap.getClass();
-            String sql = conditionsBuilder.build(null).toString();
+            String sql = conditionsBuilder.build(filedColumnNameMap).toString();
             sqlSource = sqlSourceParser.parse(sql, parameterType, context.getBindings());
             sql = (String)ReflectionUtil.getProperty(sqlSource, "sql");
             sql = this.structureLogicDelete(mappedStatement.getSqlCommandType(), entity,
@@ -152,7 +152,8 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             conditionsBuilder.montageJoinWhereConditions(dynamicContextMap, whereConditionsQueue, allColumnNameMap);
             conditionsBuilder.mapCondition(allFiledColumnMap, dynamicContextMap);
             conditionsBuilder.inOrNotIn(joinQuery.getInOrNotInNodeQueue(), dynamicContextMap, allColumnNameMap);
-            conditionsBuilder.montageSelectNode(joinQuery.getSelectNodeQueue(), allColumnNameMap, fromObjectTableName);
+            conditionsBuilder.montageJoinSelectNode(joinQuery.getSelectNodeQueue(), allColumnNameMap, fromObjectTableName);
+            //montageJoinSelectNode
             conditionsBuilder.existsOrNotExists(joinQuery.getExistOrNotExistQueue(), dynamicContextMap);
             conditionsBuilder.montageGroupByNode(joinQuery.getGroupByNodeQueue(), allColumnNameMap);
             conditionsBuilder.montageHavingNode(dynamicContextMap, joinQuery.getHavingNodeNodeQueue(), allColumnNameMap);

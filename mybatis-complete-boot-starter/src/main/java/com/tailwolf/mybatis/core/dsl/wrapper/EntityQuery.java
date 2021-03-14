@@ -100,6 +100,32 @@ public class EntityQuery<T> extends QueryBaseWrapper implements Serializable {
     }
 
     /**
+     * 左模糊查询
+     * @param conditionFunctional
+     *        字段名
+     * @param value
+     *        值
+     * @return
+     */
+    public EntityQuery<T> leftLike(EntityConditionFunctional<T> conditionFunctional, String value){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.LEFT_LIKE, conditionFunctional, value));
+        return this;
+    }
+
+    /**
+     * 右模糊查询
+     * @param conditionFunctional
+     *        字段名
+     * @param value
+     *        值
+     * @return
+     */
+    public EntityQuery<T> rightLike(EntityConditionFunctional<T> conditionFunctional, String value){
+        this.getWhereConditionsQueue().add(ConditionNode.newInstance(MontageSqlConstant.RIGHT_LIKE, conditionFunctional, value));
+        return this;
+    }
+
+    /**
      * 不等于
      * @param conditionFunctional
      *        字段名

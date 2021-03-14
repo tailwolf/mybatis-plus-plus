@@ -23,7 +23,7 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试eq（等于）语法
-     * SELECT * FROM sys_user WHERE update_on = '2021-02-21 18:10:47' AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE update_on = '2021-02-21 18:10:47' AND deleted = 0
      */
     @Test
     public void eq(){
@@ -33,7 +33,7 @@ public class TestSingleDslQueryOne {
     }
     /**
      * 测试ne（不等于）语法
-     * SELECT * FROM sys_user WHERE id != 1 AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE id != 1 AND deleted = 0
      */
     @Test
     public void ne(){
@@ -43,7 +43,7 @@ public class TestSingleDslQueryOne {
     }
     /**
      * 测试ge（大于等于）语法
-     * SELECT * FROM sys_user WHERE id >= 322 AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE id >= 322 AND deleted = 0
      */
     @Test
     public void ge(){
@@ -54,7 +54,7 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试le（小于等于）语法
-     * SELECT * FROM sys_user WHERE id <= 1000 AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE id <= 1000 AND deleted = 0
      */
     @Test
     public void le(){
@@ -65,7 +65,7 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试gt（大于）语法
-     * SELECT * FROM sys_user WHERE id > 1 AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE id > 1 AND deleted = 0
      */
     @Test
     public void gt(){
@@ -76,7 +76,7 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试lt（小于）语法
-     * SELECT * FROM sys_user WHERE id < 1000 AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE id < 1000 AND deleted = 0
      */
     @Test
     public void lt(){
@@ -86,19 +86,21 @@ public class TestSingleDslQueryOne {
     }
 
     /**
-     * 测试like（模糊查询）语法
-     * SELECT * FROM sys_user WHERE account LIKE '%account%' AND deleted = 0
+     * 测试like（模糊查询）
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE account LIKE concat('%', 'account', '%') AND user_pwd LIKE concat('%', 'userPwd') AND user_name LIKE concat('userName', '%') AND deleted = 0
      */
     @Test
     public void like(){
         EntityQuery<SysUser> entityQuery = new EntityQuery<>();
-        entityQuery.like(SysUser::getAccount, "%account%");
+        entityQuery.like(SysUser::getAccount, "account");
+        entityQuery.leftLike(SysUser::getUserPwd, "userPwd");
+        entityQuery.rightLike(SysUser::getUserName, "userName");
         System.out.println(JSON.toJSONString(sysUserService.dslQueryOne(entityQuery)));
-
     }
 
     /**
-     * 测试or语法。or语法有问题
+     * 测试or语法。
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE id = 1 AND (user_pwd = 'mmm' OR account = 'vvv') OR user_pwd = 'mmm' OR (user_pwd = 'mmm' OR account = 'vvv') AND deleted = 0
      */
     @Test
     public void or(){
@@ -110,9 +112,10 @@ public class TestSingleDslQueryOne {
         entityQuery.or(and -> and.eq(SysUser::getUserPwd, "mmm").or().eq(SysUser::getAccount, "vvv"));
         System.out.println(JSON.toJSONString(sysUserService.dslQueryOne(entityQuery)));
     }
+
     /**
      * 测试in语法
-     * SELECT * FROM sys_user WHERE account IN (1, 2, 3) AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE account IN (1, 2, 3) AND deleted = 0
      */
     @Test
     public void in(){
@@ -123,7 +126,7 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试not in语法
-     * SELECT * FROM sys_user WHERE account NOT IN (1, 2, 3) AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE account NOT IN (1, 2, 3) AND deleted = 0
      */
     @Test
     public void notIn(){
@@ -134,7 +137,7 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试is null语法
-     * SELECT * FROM sys_user WHERE account IS NULL AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE account IS NULL AND deleted = 0
      */
     @Test
     public void isNull(){
@@ -145,14 +148,13 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试is not null语法
-     * SELECT * FROM sys_user WHERE account IS NOT NULL AND deleted = 0
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE account IS NOT NULL AND deleted = 0
      */
     @Test
     public void isNotNull(){
         EntityQuery<SysUser> entityQuery = new EntityQuery<>();
         entityQuery.isNotNull(SysUser::getAccount);
         System.out.println(JSON.toJSONString(sysUserService.dslQueryOne(entityQuery)));
-
     }
 
     /**
@@ -168,7 +170,7 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试groupBy和having语法
-     * SELECT * FROM sys_user WHERE deleted = 0 GROUP BY id, account HAVING id != 1
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE deleted = 0 GROUP BY id, account HAVING id != 1
      */
     @Test
     public void group(){
@@ -180,11 +182,12 @@ public class TestSingleDslQueryOne {
 
     /**
      * 测试orderBy语法
-     * SELECT * FROM sys_user WHERE deleted = 0 ORDER BY id ASC, account DESC
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE user_pwd = 'ggg' AND deleted = 0 ORDER BY id ASC, account DESC
      */
     @Test
     public void orderBy(){
         EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+        entityQuery.eq(SysUser::getUserPwd, "ggg");
         entityQuery.asc(SysUser::getId);
         entityQuery.desc(SysUser::getAccount);
         System.out.println(JSON.toJSONString(sysUserService.dslQueryOne(entityQuery)));

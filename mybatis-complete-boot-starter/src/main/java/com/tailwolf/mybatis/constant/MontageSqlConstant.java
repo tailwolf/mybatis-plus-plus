@@ -25,6 +25,8 @@ public class MontageSqlConstant {
     public static final String IS = "IS ";
     public static final String NOT_IN = "NOT IN ";
     public static final String LIKE = "LIKE ";
+    public static final String LEFT_LIKE = " LIKE ";
+    public static final String RIGHT_LIKE = "LIKE  ";
     public static final String DESC = "desc ";
     public static final String ASC = "asc ";
 

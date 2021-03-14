@@ -20,6 +20,11 @@ import java.util.List;
 /**
  * 双表查询的基础语法和单表查询一样，可以查看TestSingleDslQuery文件
  * 这里给出的是双表查询特有的语法
+ *
+ * 规则说明：
+ * joinQuery(JoinQuery joinQuery, Class<T> clazz) 方法的第二个入参定义了返回对象。
+ * 返回对象的属性里面，不使用@Collection或者@Association注解修饰的属性，对应table1
+ * 而使用了使用@Collection或者@Association注解修饰的属性，对应table2
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -27,12 +32,6 @@ public class TestJoinDslQuery {
 
     @Autowired
     private JoinOptService joinOptService;
-    @Autowired
-    private SysUserService sysUserService;
-    @Autowired
-    private SysUserRoleService sysUserRoleService;
-    @Autowired
-    private TaskService taskService;
 
     /**
      * 测试innerJoin

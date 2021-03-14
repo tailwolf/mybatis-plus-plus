@@ -53,10 +53,10 @@ public class ConditionsBuilder {
     private StringBuffer havingBuffer;
     private StringBuffer orderBuffer;
 
-    public ConditionsBuilder(EntityQuery entityQuery, String tableName) {
+    public ConditionsBuilder(String tableName) {
         initBuffer();
-        this.selectColumnBuffer.append(MontageSqlConstant.SELECT);
-        this.selectTableBuffer.append(MontageSqlConstant.FROM).append(tableName).append(MontageSqlConstant.SPACE);
+//        this.selectColumnBuffer.append(MontageSqlConstant.SELECT);
+        this.selectTableBuffer.append(MontageSqlConstant.SPACE).append(MontageSqlConstant.FROM).append(tableName).append(MontageSqlConstant.SPACE);
     }
 
     public ConditionsBuilder(UpdateBaseWrapper updateBaseWrapper, String tableName) {
@@ -70,10 +70,8 @@ public class ConditionsBuilder {
 
     public ConditionsBuilder(JoinQuery joinQuery, String fromObjectTableName, String joinObjectTableName) {
         initBuffer();
-        this.selectColumnBuffer.append(MontageSqlConstant.SELECT);
-        this.selectTableBuffer.append(MontageSqlConstant.SPACE);
         String joinKeyWord = joinQuery.getJoinKeyWord();
-        this.selectTableBuffer.append(MontageSqlConstant.FROM).append(fromObjectTableName).append(MontageSqlConstant.SPACE).append(MontageSqlConstant.T1);
+        this.selectTableBuffer.append(MontageSqlConstant.SPACE).append(MontageSqlConstant.FROM).append(fromObjectTableName).append(MontageSqlConstant.SPACE).append(MontageSqlConstant.T1);
         if(StringUtils.isEmpty(joinKeyWord)){
             this.selectTableBuffer.append(MontageSqlConstant.COMMA).append(joinObjectTableName).append(MontageSqlConstant.SPACE).append(MontageSqlConstant.T2).append(MontageSqlConstant.SPACE);
         }else{
@@ -204,15 +202,7 @@ public class ConditionsBuilder {
         SerializedLambda lambda = SerializedLambdaUtil.getSerializedLambda((EntityConditionFunctional)filedNameObject);
         String filedName = this.analyseGetterName(lambda.getImplMethodName());
         String columnName = filedColumnNameMap.get(filedName);//数据库字段名
-        Object templateName = "";
-        if(MontageSqlConstant.LIKE.equals(conditionKeywork)){
-            templateName = "'" + value + "'";
-        }else if(MontageSqlConstant.IS.equals(conditionKeywork)){
-            templateName = value;
-        } else{
-            templateName = "#{" + filedName + "}";
-            ((Map)queryEntity).put(filedName, value);
-        }
+        Object templateName = whereTemplateName(filedName, value, conditionNode.getConditionKeywork(), queryEntity);
 
         if(filedColumnMap.get(filedName) != null){
             filedColumnMap.remove(filedName);
@@ -251,6 +241,25 @@ public class ConditionsBuilder {
             Map<String, Object> queryMap = (Map) queryEntity;
             queryMap.put(param, value);
         }
+        return templateName;
+    }
+
+    private String whereTemplateName(String param, Object value, String conditionKeywork, Object queryEntity) {
+        String templateName;
+        if(MontageSqlConstant.IS.equals(conditionKeywork)){
+            templateName = (String)value;
+            return templateName;
+        } else if(MontageSqlConstant.LIKE.equals(conditionKeywork)){
+            templateName = "concat('%', #{" + value + "}, '%')";
+        }else if(MontageSqlConstant.LEFT_LIKE.equals(conditionKeywork)){
+            templateName = "concat('%', #{" + value + "})";
+        }else if(MontageSqlConstant.RIGHT_LIKE.equals(conditionKeywork)){
+            templateName = "concat(#{" + value + "}, '%')";
+        }else{
+            templateName = "#{" + param + "}";
+        }
+        Map<String, Object> queryMap = (Map) queryEntity;
+        queryMap.put(param, value);
         return templateName;
     }
 
@@ -317,11 +326,11 @@ public class ConditionsBuilder {
             templateName = filedColumnNameMap.get(tableFieldName((JoinConditionFunctional)value));
         }else if(filedNameObject instanceof FromConditionFunctional){
             columnName = filedColumnNameMap.get(tableFieldName((FromConditionFunctional)filedNameObject));
-            templateName = whereTemplateName(value, conditionNode.getConditionKeywork(), dynamicContextMap);
+            templateName = whereTemplateName(createUUid(), value, conditionNode.getConditionKeywork(), dynamicContextMap);
 
         }else {
             columnName = filedColumnNameMap.get(tableFieldName((JoinConditionFunctional)filedNameObject));
-            templateName = whereTemplateName(value, conditionNode.getConditionKeywork(), dynamicContextMap);
+            templateName = whereTemplateName(createUUid(), value, conditionNode.getConditionKeywork(), dynamicContextMap);
         }
 
 //        if(filedColumnMap.get(filedName) != null){
@@ -363,8 +372,49 @@ public class ConditionsBuilder {
         return tableName + "." + fieldName;
     }
 
+
     /**
-     * 拼接Select字段
+     * join查询拼接select字段
+     * @param nodeIterator
+     */
+    public void montageJoinSelectNode(NodeIterator<SelectNode> nodeIterator, Map<String, String> allColumnNameMap, String fromObjectTableName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+        selectColumnBuffer.append(MontageSqlConstant.SELECT);
+        SelectNode selectNode = nodeIterator.currentNode();
+        if(selectNode == null){
+            List<String> select = new ArrayList<>();
+            Set<Map.Entry<String, String>> entries = allColumnNameMap.entrySet();
+            for(var entity: entries){
+                select.add(entity.getValue() + " as " + entity.getValue().replace(".", "_"));
+            }
+            selectColumnBuffer.append(StringUtils.join(select, ", "));
+            return;
+        }
+
+        montageSelectNode(nodeIterator.nextNonius(), allColumnNameMap, fromObjectTableName);
+    }
+
+    /**
+     * 单表查询拼接select字段
+     * @param nodeIterator
+     */
+    public void montageSingleSelectNode(NodeIterator<SelectNode> nodeIterator, Map<String, String> columnNameMap, String fromObjectTableName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+        selectColumnBuffer.append(MontageSqlConstant.SELECT);
+        SelectNode selectNode = nodeIterator.currentNode();
+        if(selectNode == null){
+            List<String> select = new ArrayList<>();
+            Set<Map.Entry<String, String>> entries = columnNameMap.entrySet();
+            for(var entity: entries){
+                select.add(entity.getValue());
+            }
+            selectColumnBuffer.append(StringUtils.join(select, ", "));
+            return;
+        }
+
+        montageSelectNode(nodeIterator.nextNonius(), columnNameMap, fromObjectTableName);
+    }
+
+    /**
+     * 拼接select字段
      * @param nodeIterator
      */
     public void montageSelectNode(NodeIterator<SelectNode> nodeIterator, Map<String, String> allColumnNameMap, String fromObjectTableName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
@@ -381,11 +431,13 @@ public class ConditionsBuilder {
             if(!StringUtils.isEmpty(sqlFuncName)){
                 column = sqlFuncName.replace("$", column);
             }
+            column = column + " as " + column.replace(".", "_");
         }else if(filedNameObject instanceof JoinSelectJoinFunctional){
             column = allColumnNameMap.get(this.tableFieldName((JoinSelectJoinFunctional)filedNameObject));
             if(!StringUtils.isEmpty(sqlFuncName)){
                 column = sqlFuncName.replace("$", column);
             }
+            column = column + " as " + column.replace(".", "_");
         }else if(filedNameObject instanceof String){
             column = (String)filedNameObject;
         }else if(filedNameObject instanceof SelectFunctional){
@@ -676,16 +728,6 @@ public class ConditionsBuilder {
             sqlBuffer.append(setColumnStr);
         }
         else{
-            if(MontageSqlConstant.SELECT.equals(selectColumnStr)){
-                List<String> select = new ArrayList<>();
-                Set<Map.Entry<String, String>> entries = columnNameMap.entrySet();
-                for(var entity: entries){
-                    select.add(entity.getValue() + " as " + entity.getValue().replace(".", "_"));
-//                    select.add(entity.getValue());
-                }
-                selectColumnStr = selectColumnStr + StringUtils.join(select, ", ");
-//                selectColumnStr = selectColumnStr + MontageSqlConstant.STAR_KEY;
-            }
             sqlBuffer.append(selectColumnStr);
             sqlBuffer.append(selectTableStr);
             sqlBuffer.append(onConditionStr);
