@@ -111,9 +111,14 @@ public class TestJoinDslQuery {
     @Test
     public void testSelect(){
         JoinQuery<Project, Task> joinQuery = new JoinQuery<>();
+
         joinQuery.select(select -> select.column(Project::getId).column(Project::getProjectName).column(Task::getTaskName))
                 .from(Project::new).innerJoin(Task::new)
-                .on(condition -> condition.eq(Project::getId, Task::getProjectId));
+                .on(condition -> condition.eq(Project::getId, Task::getProjectId))
+                .eq(Project::getProjectName, "项目名称")
+                .groupBy(group -> group.column(Project::getProjectName));
+
+        
         List<ProjectVo> projectVoList = joinOptService.joinQuery(joinQuery, ProjectVo.class);
         System.out.println(JSON.toJSONString(projectVoList));
     }

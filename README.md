@@ -31,6 +31,19 @@ mybatis-complete没有改变任何mybatis的原生功能和配置，它的核心
   - [x] 逆向工程
   - [ ] 正向工程（1.5版本后开发）
 
+## 技术选型
+1.java 11  
+2.Spring Boot 2.x
+
+## 引用方式
+```xml
+<dependency>
+  <groupId>com.github.tailwolf</groupId>
+  <artifactId>mybatis-complete-boot-starter</artifactId>
+  <version>0.5.0-RELEASE</version>
+</dependency>
+```
+
 ## 特性预览
 #### 单表操作：  
 ```java
