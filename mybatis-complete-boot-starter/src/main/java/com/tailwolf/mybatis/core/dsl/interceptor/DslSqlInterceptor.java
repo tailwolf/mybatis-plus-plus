@@ -63,7 +63,7 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
         if(dslWrapper instanceof EntityQuery){
             EntityQuery entiryQuery = (EntityQuery) dslWrapper;
             Object entity = entiryQuery.getEntity();
-            ResultMap inlineResultMap = (new ResultMap.Builder(configuration, mappedStatement.getId() + "-Inline", Map.class, new ArrayList<>(), (Boolean) null)).build();
+            ResultMap inlineResultMap = (new ResultMap.Builder(configuration, mappedStatement.getId() + "-Inline", entity.getClass(), new ArrayList<>(), (Boolean) null)).build();
             List<ResultMap> resultMaps = new ArrayList<>();
             resultMaps.add(inlineResultMap);
             ReflectionUtil.setProperty(mappedStatement, "resultMaps", resultMaps);

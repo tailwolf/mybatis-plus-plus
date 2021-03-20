@@ -39,76 +39,77 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
         Type[] genericInterfaces = mapperInterface.getGenericInterfaces();
-        Type genericInterface = genericInterfaces[0];
-        String typeName = genericInterface.getTypeName();
-        String className = typeName.replace("com.tailwolf.mybatis.core.common.dao.EntityOptMapper<", "").replace(">", "");
-        if((method.getName().equals("findByPk") || method.getName().equals("deleteByPk")) && args.length == 1){
-            Object arg = args[0];
-            if(!className.equals(arg.getClass().getName())){
-                Class<?> clazz = Class.forName(className);
-                Object entity = clazz.newInstance();
-                List<Field> allFieldList = ReflectionUtil.getAllFields(clazz);
-                List<ColumnModel> columnModelList = ColumnModelUtil.createColumnModel(allFieldList, new ArrayList<>());
+        if(genericInterfaces.length > 0){
+            Type genericInterface = genericInterfaces[0];
+            String typeName = genericInterface.getTypeName();
+            String className = typeName.replace("com.tailwolf.mybatis.core.common.dao.EntityOptMapper<", "").replace(">", "");
+            if((method.getName().equals("findByPk") || method.getName().equals("deleteByPk")) && args.length == 1){
+                Object arg = args[0];
+                if(!className.equals(arg.getClass().getName())){
+                    Class<?> clazz = Class.forName(className);
+                    Object entity = clazz.newInstance();
+                    List<Field> allFieldList = ReflectionUtil.getAllFields(clazz);
+                    List<ColumnModel> columnModelList = ColumnModelUtil.createColumnModel(allFieldList, new ArrayList<>());
 
-                for(int i = 0; i < columnModelList.size(); i++){
-                    ColumnModel columnModel = columnModelList.get(i);
-                    Field field = columnModel.getField();
-                    String fieldName = field.getName();
-                    boolean pk = columnModel.isPk();
+                    for(int i = 0; i < columnModelList.size(); i++){
+                        ColumnModel columnModel = columnModelList.get(i);
+                        Field field = columnModel.getField();
+                        String fieldName = field.getName();
+                        boolean pk = columnModel.isPk();
 
-                    if(pk){
-                        ReflectionUtil.setProperty(entity, fieldName, arg);
-                        args[0] = entity;
-                        break;
-                    }
-                }
-            }
-        }else if(method.getName().equals("deleteBatchByPk") && args.length == 1){
-            Object arg = args[0];
-            if(arg instanceof Collection){
-                Collection collection = (Collection)arg;
-                Class<?> clazz = null;
-                String pkFieldName = null;
-                end: for(Object obj: collection){
-                    if(!className.equals(obj.getClass().getName())){
-                        clazz = Class.forName(className);
-                        List<Field> allFields = ReflectionUtil.getAllFields(clazz);
-                        List<ColumnModel> columnModelList = ColumnModelUtil.createColumnModel(allFields, new ArrayList<>());
-                        for(int i = 0; i < columnModelList.size(); i++){
-                            ColumnModel columnModel = columnModelList.get(i);
-                            Field field = columnModel.getField();
-                            String fieldName = field.getName();
-                            boolean pk = columnModel.isPk();
-
-                            if(pk){
-                                pkFieldName = fieldName;
-                                break end;
-                            }
+                        if(pk){
+                            ReflectionUtil.setProperty(entity, fieldName, arg);
+                            args[0] = entity;
+                            break;
                         }
                     }
                 }
+            }else if(method.getName().equals("deleteBatchByPk") && args.length == 1){
+                Object arg = args[0];
+                if(arg instanceof Collection){
+                    Collection collection = (Collection)arg;
+                    Class<?> clazz = null;
+                    String pkFieldName = null;
+                    end: for(Object obj: collection){
+                        if(!className.equals(obj.getClass().getName())){
+                            clazz = Class.forName(className);
+                            List<Field> allFields = ReflectionUtil.getAllFields(clazz);
+                            List<ColumnModel> columnModelList = ColumnModelUtil.createColumnModel(allFields, new ArrayList<>());
+                            for(int i = 0; i < columnModelList.size(); i++){
+                                ColumnModel columnModel = columnModelList.get(i);
+                                Field field = columnModel.getField();
+                                String fieldName = field.getName();
+                                boolean pk = columnModel.isPk();
 
-                if(clazz != null){
-                    if(StringUtils.isEmpty(pkFieldName)){
-                        throw new MybatisCompleteRuntimeException("该实体类注解无主键！");
+                                if(pk){
+                                    pkFieldName = fieldName;
+                                    break end;
+                                }
+                            }
+                        }
                     }
 
-                    List entityList = new ArrayList();
-                    for(Object obj: collection){
-                        Object entity = clazz.newInstance();
-                        ReflectionUtil.setProperty(entity, pkFieldName, obj);
-                        entityList.add(entity);
+                    if(clazz != null){
+                        if(StringUtils.isEmpty(pkFieldName)){
+                            throw new MybatisCompleteRuntimeException("该实体类注解无主键！");
+                        }
+
+                        List entityList = new ArrayList();
+                        for(Object obj: collection){
+                            Object entity = clazz.newInstance();
+                            ReflectionUtil.setProperty(entity, pkFieldName, obj);
+                            entityList.add(entity);
+                        }
+                        args[0] = entityList;
                     }
-                    args[0] = entityList;
                 }
+            }else if((method.getName().equals("dslQueryOne") || method.getName().equals("dslQuery") || method.getName().equals("dslDelete") || method.getName().equals("dslUpdate")) && args.length == 1){
+                Object arg = args[0];
+                Class<?> clazz = Class.forName(className);
+                Object entity = clazz.newInstance();
+                ReflectionUtil.setProperty(arg, "entity", entity);
             }
-        }else if((method.getName().equals("dslQueryOne") || method.getName().equals("dslQuery") || method.getName().equals("dslDelete") || method.getName().equals("dslUpdate")) && args.length == 1){
-            Object arg = args[0];
-            Class<?> clazz = Class.forName(className);
-            Object entity = clazz.newInstance();
-            ReflectionUtil.setProperty(arg, "entity", entity);
         }
-
 
         Class<? extends Method> aClass = method.getClass();
         String name = method.getName();

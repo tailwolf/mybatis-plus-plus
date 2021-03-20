@@ -382,8 +382,7 @@ public class ConditionsBuilder {
         SelectNode selectNode = nodeIterator.currentNode();
         if(selectNode == null){
             List<String> select = new ArrayList<>();
-            Set<Map.Entry<String, String>> entries = allColumnNameMap.entrySet();
-            for(var entity: entries){
+            for(Map.Entry<String, String> entity: allColumnNameMap.entrySet()){
                 select.add(entity.getValue() + " as " + entity.getValue().replace(".", "_"));
             }
             selectColumnBuffer.append(StringUtils.join(select, ", "));
@@ -402,8 +401,7 @@ public class ConditionsBuilder {
         SelectNode selectNode = nodeIterator.currentNode();
         if(selectNode == null){
             List<String> select = new ArrayList<>();
-            Set<Map.Entry<String, String>> entries = columnNameMap.entrySet();
-            for(var entity: entries){
+            for(Map.Entry<String, String> entity: columnNameMap.entrySet()){
                 select.add(entity.getValue());
             }
             selectColumnBuffer.append(StringUtils.join(select, ", "));

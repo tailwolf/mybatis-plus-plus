@@ -10,12 +10,12 @@
 
     <groupId>com.github.tailwolf</groupId>
     <artifactId>mybatis-complete-boot-starter</artifactId>
-    <version>0.5.0-RELEASE</version>
+    <version>0.5.1</version>
     <packaging>jar</packaging>
     <name>mybatis-complete-boot-starter</name>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
 
         <!--项目编码-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -182,7 +182,7 @@
                     <!-- 与 setting.xml 的 server 配置中的 sonatype-release 对应-->
                     <serverId>sonatype-release</serverId>
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>

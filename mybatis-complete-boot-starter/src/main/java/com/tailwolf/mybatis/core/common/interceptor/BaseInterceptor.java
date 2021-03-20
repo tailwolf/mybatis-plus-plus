@@ -102,7 +102,7 @@ public class BaseInterceptor {
      */
     protected void montageResultLable(List<ColumnModel> columnModelList, StringBuffer resultMapBuffer, AtomicInteger tableIndex){
         Map<String, String> filedColumnMap = getFiledColumnNameMap(columnModelList, "t" + tableIndex, null);
-        for(var entry: filedColumnMap.entrySet()){
+        for(Map.Entry<String, String> entry: filedColumnMap.entrySet()){
             String filedName = entry.getKey();
             String columnName = entry.getValue();
             columnName = columnName.replace(".", "_");
@@ -165,7 +165,10 @@ public class BaseInterceptor {
         resultMapBuffer.append("\">");
 
         List<Field> fieldList = ReflectionUtil.getAllFields(returnEntity);
-        List<ColumnModel> columnModelList = ColumnModelUtil.createColumnModel(fieldList, List.of(Association.class, Collection.class));
+        List<Class> notExistAnnoList = new ArrayList<>();
+        notExistAnnoList.add(Association.class);
+        notExistAnnoList.add(Collection.class);
+        List<ColumnModel> columnModelList = ColumnModelUtil.createColumnModel(fieldList, notExistAnnoList);
         montageResultLable(columnModelList, resultMapBuffer, tableIndex);
         createResultMap(returnEntity, configuration, resultMapBuffer, tableIndex);
         resultMapBuffer.append("</resultMap>");

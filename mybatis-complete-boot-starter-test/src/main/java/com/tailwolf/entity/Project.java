@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode()
 @Table(tableName = "project")
-public class Project implements Serializable{
+public class Project implements Serializable {
     //主键id
     private Integer id;
 

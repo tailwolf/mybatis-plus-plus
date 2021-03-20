@@ -29,9 +29,9 @@
 
         <!--依赖mybatis-complete-->
         <dependency>
-            <groupId>com.tailwolf</groupId>
+            <groupId>com.github.tailwolf</groupId>
             <artifactId>mybatis-complete-boot-starter</artifactId>
-            <version>0.5.0-RELEASE</version>
+            <version>0.5.1</version>
         </dependency>
 
         <dependency>

@@ -5,6 +5,7 @@ import com.tailwolf.mybatis.core.ColumnModel;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -143,10 +144,12 @@ public class ReflectionUtil {
         if(clazz == null){
             return;
         }
-        Field[] declaredFields = clazz.getDeclaredFields();
-        if(declaredFields.length > 0){
-            fieldList.addAll(Arrays.asList(declaredFields));
+        for(Field field: clazz.getDeclaredFields()){
+            if(!Modifier.isStatic(field.getModifiers())){
+                fieldList.add(field);
+            }
         }
+
         getAllFields(clazz.getSuperclass(), fieldList);
     }
 
