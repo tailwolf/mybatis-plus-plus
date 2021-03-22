@@ -20,6 +20,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.*;
 
 import static org.apache.commons.lang3.ClassUtils.PACKAGE_SEPARATOR;
@@ -39,10 +40,13 @@ public class CommonMapperAware implements ApplicationContextAware {
 
                 for(Resource resource: resources){
                     Class<?> mapperClass = Class.forName(basePackage + PACKAGE_SEPARATOR + resource.getFilename().replace(".class", ""));
-                    String typeName = mapperClass.getGenericInterfaces()[0].getTypeName();
-                    if(typeName.startsWith("com.tailwolf.mybatis.core.common.dao.EntityOptMapper")){
-                        String entityReference = typeName.replace("com.tailwolf.mybatis.core.common.dao.EntityOptMapper<", "").replace(">", "");
-                        mapperEntityMap.put(mapperClass.getName(), Class.forName(entityReference));
+                    Type[] genericInterfaces = mapperClass.getGenericInterfaces();
+                    if(genericInterfaces.length > 0){
+                        String typeName = genericInterfaces[0].getTypeName();
+                        if(typeName.startsWith("com.tailwolf.mybatis.core.common.dao.EntityOptMapper")){
+                            String entityReference = typeName.replace("com.tailwolf.mybatis.core.common.dao.EntityOptMapper<", "").replace(">", "");
+                            mapperEntityMap.put(mapperClass.getName(), Class.forName(entityReference));
+                        }
                     }
                 }
             }
@@ -95,6 +99,7 @@ public class CommonMapperAware implements ApplicationContextAware {
         }
         catch (Exception ex){
             ex.printStackTrace();
+            System.exit(0);
             throw new ApplicationContextException(ex.getMessage());//如果出现异常，必须停止项目继续启动
         }
     }

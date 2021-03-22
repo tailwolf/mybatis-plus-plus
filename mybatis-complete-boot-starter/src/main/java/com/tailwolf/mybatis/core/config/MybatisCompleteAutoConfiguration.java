@@ -27,9 +27,6 @@ import java.util.*;
 public class MybatisCompleteAutoConfiguration {
     private final MybatisCompleteProperties mybatisCompleteProperties;
 
-    public List<String> dslMapperList;
-    public List<String> daoMapperList;
-
     public MybatisCompleteAutoConfiguration(MybatisCompleteProperties mybatisCompleteProperties){
         this.mybatisCompleteProperties = mybatisCompleteProperties;
     }
