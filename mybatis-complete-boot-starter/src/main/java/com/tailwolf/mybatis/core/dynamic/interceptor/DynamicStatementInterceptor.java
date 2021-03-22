@@ -1,4 +1,4 @@
-package com.tailwolf.mybatis.core.api.interceptor;
+package com.tailwolf.mybatis.core.dynamic.interceptor;
 
 import com.tailwolf.mybatis.core.common.interceptor.BaseInterceptor;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +9,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import com.tailwolf.mybatis.core.annotation.Table;
-import com.tailwolf.mybatis.core.api.build.EntityCrudStatementBuild;
+import com.tailwolf.mybatis.core.dynamic.build.DynamicCrudStatementBuild;
 import com.tailwolf.mybatis.constant.InterceptorConstant;
 import com.tailwolf.mybatis.core.exception.MybatisCompleteRuntimeException;
 import com.tailwolf.mybatis.core.ColumnModel;
@@ -26,7 +26,7 @@ import java.util.*;
  * @date 2020-09-06
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
-public class EntityStatementInterceptor extends BaseInterceptor implements Interceptor {
+public class DynamicStatementInterceptor extends BaseInterceptor implements Interceptor {
 
     private String logicDeleteField;
     private Integer logicDeleteValue = 1;
@@ -42,7 +42,7 @@ public class EntityStatementInterceptor extends BaseInterceptor implements Inter
         BoundSql boundSql = preparedStatementHandler.getBoundSql();
         MappedStatement mappedStatement = (MappedStatement)ReflectionUtil.getProperty(preparedStatementHandler, InterceptorConstant.MAPPEDS_TATEMENT);
         String mappedStatementId = mappedStatement.getId();
-        if(!EntityCrudStatementBuild.ENTITY_CRUD_ID_SET.contains(mappedStatementId)){
+        if(!DynamicCrudStatementBuild.DYNAMIC_TABLE_CRUD_ID_SET.contains(mappedStatementId)){
             return invocation.proceed();
         }
 

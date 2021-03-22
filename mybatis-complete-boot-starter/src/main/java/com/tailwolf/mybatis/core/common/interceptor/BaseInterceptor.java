@@ -8,6 +8,7 @@ import com.tailwolf.mybatis.core.util.CollectionUtil;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.NotExpression;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
@@ -457,6 +458,8 @@ public class BaseInterceptor {
             if(rightSingleExpression != null){
                 return rightSingleExpression;
             }
+        }else if(expression instanceof ExistsExpression || expression instanceof NotExpression){
+            return null;
         }
         else{
             AndExpression andExpression = (AndExpression)expression;

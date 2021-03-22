@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.tailwolf.mybatis.core.annotation.MybatisCompleteScans;
 
 @SpringBootApplication
-@MapperScan({"com.tailwolf.mapper"})
+@MapperScan(basePackages = {"com.tailwolf.mapper","com.tailwolf.mapper2"})
 @MybatisCompleteScans
 public class StarterTestApplication {
     public static void main(String[] args) {

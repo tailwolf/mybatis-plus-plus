@@ -32,9 +32,6 @@ public class MybatisCompleteAutoConfiguration {
 
     public MybatisCompleteAutoConfiguration(MybatisCompleteProperties mybatisCompleteProperties){
         this.mybatisCompleteProperties = mybatisCompleteProperties;
-
-        this.dslMapperList = MapperListProperties.dslMapperList;
-        this.daoMapperList = MapperListProperties.daoMapperList;
     }
 
     /**
@@ -55,8 +52,6 @@ public class MybatisCompleteAutoConfiguration {
     @ConditionalOnMissingBean
     public CommonMapperAware crudMapperAware(){
         CommonMapperAware crudMapperAware = new CommonMapperAware();
-        crudMapperAware.setDaoMapperList(daoMapperList);
-        crudMapperAware.setDslMapperList(dslMapperList);
         return crudMapperAware;
     }
 
@@ -90,22 +85,6 @@ public class MybatisCompleteAutoConfiguration {
     }
 
     private void setProperties(Properties properties){
-        properties.setProperty(InterceptorConstant.DSL_QUERY, dslMapperList.get(0));
-        properties.setProperty(InterceptorConstant.DSL_QUERY_ONE, dslMapperList.get(1));
-        properties.setProperty(InterceptorConstant.DSL_DELETE, dslMapperList.get(2));
-        properties.setProperty(InterceptorConstant.DSL_UPDATE, dslMapperList.get(3));
-        properties.setProperty(InterceptorConstant.JOIN_QUERY, dslMapperList.get(4));
-
-        properties.setProperty(InterceptorConstant.INSERT, daoMapperList.get(0));
-        properties.setProperty(InterceptorConstant.UPDATE_BY_PK, daoMapperList.get(1));
-        properties.setProperty(InterceptorConstant.UPDATE_BATCH_BY_PK, daoMapperList.get(2));
-        properties.setProperty(InterceptorConstant.DELETE_BATCH_BY_PK, daoMapperList.get(3));
-        properties.setProperty(InterceptorConstant.DELETE_BY_PK, daoMapperList.get(4));
-        properties.setProperty(InterceptorConstant.DELETE, daoMapperList.get(5));
-        properties.setProperty(InterceptorConstant.FIND_LIST, daoMapperList.get(6));
-        properties.setProperty(InterceptorConstant.FIND_ONE, daoMapperList.get(7));
-        properties.setProperty(InterceptorConstant.FIND_BY_PK, daoMapperList.get(8));
-
         DbConfig dbConfig = mybatisCompleteProperties.getDbConfig();
         if(dbConfig != null){
             String logicDeleteField = dbConfig.getLogicDeleteField();

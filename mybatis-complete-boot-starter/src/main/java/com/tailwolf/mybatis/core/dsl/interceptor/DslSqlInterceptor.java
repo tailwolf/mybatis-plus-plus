@@ -2,6 +2,7 @@ package com.tailwolf.mybatis.core.dsl.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.tailwolf.mybatis.core.common.interceptor.BaseInterceptor;
+import com.tailwolf.mybatis.core.dsl.build.DslMappedStatementBuild;
 import com.tailwolf.mybatis.core.dsl.node.ConditionNode;
 import com.tailwolf.mybatis.core.util.ColumnModelUtil;
 import com.tailwolf.mybatis.core.util.ReflectionUtil;
@@ -52,7 +53,7 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
         MappedStatement mappedStatement = (MappedStatement)invocation.getArgs()[0];
         Configuration configuration = mappedStatement.getConfiguration();
 
-        if(!this.dslMapperList.contains(mappedStatement.getId())){
+        if(!DslMappedStatementBuild.DSL_CRUD_ID_SET.contains(mappedStatement.getId())){
             return invocation.proceed();
         }
 
@@ -246,11 +247,6 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties properties) {
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.DSL_QUERY));
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.DSL_QUERY_ONE));
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.DSL_UPDATE));
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.DSL_DELETE));
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.JOIN_QUERY));
         this.logicDeleteField = properties.getProperty(InterceptorConstant.FIELD);
         String logicNotDeleteValueProperty = properties.getProperty(InterceptorConstant.LOGIC_NOT_DELETE_VALUE);
         this.logicNotDeleteValue = StringUtils.isEmpty(logicNotDeleteValueProperty)?null:Integer.valueOf(logicNotDeleteValueProperty);

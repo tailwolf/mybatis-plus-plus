@@ -192,4 +192,33 @@ public class TestSingleDslQuery {
         entityQuery.desc(SysUser::getAccount);
         System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));
     }
+
+    /**
+     * 测试分页
+     * SELECT COUNT(*) FROM (SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE user_pwd = 'ggg' AND deleted = 0) TEMP
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE user_pwd = 'ggg' AND deleted = 0 limit 0,6
+     */
+    @Test
+    public void page(){
+        EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+        entityQuery.eq(SysUser::getUserPwd, "ggg");
+        entityQuery.setCurrentPage(1);
+        entityQuery.setPageSize(6);
+        System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));
+    }
+
+    /**
+     * 测试exists和 not exists
+     * SELECT create_by, deleted, update_by, user_pwd, create_on, id, user_name, update_on, version, account FROM sys_user WHERE user_pwd = 'ggg' AND EXISTS (SELECT 'x' FROM task t WHERE t.id = 3) AND NOT EXISTS (SELECT 'x' FROM project p) AND deleted = 0
+     *
+     * 使用{}形式的参数可防止sql注入攻击
+     */
+    @Test
+    public void existsAndNotExists(){
+        EntityQuery<SysUser> entityQuery = new EntityQuery<>();
+        entityQuery.eq(SysUser::getUserPwd, "ggg");
+        entityQuery.exists("select 'x' from task t where t.id = {1}", 3);
+        entityQuery.notExists("select 'x' from project p");
+        System.out.println(JSON.toJSONString(sysUserService.dslQuery(entityQuery)));
+    }
 }

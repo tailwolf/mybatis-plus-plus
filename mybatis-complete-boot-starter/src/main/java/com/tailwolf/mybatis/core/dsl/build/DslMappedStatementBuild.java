@@ -16,32 +16,49 @@ import java.util.*;
  */
 public class DslMappedStatementBuild extends MappedStatementBuild {
 
-    private List<String> dslMapperList;
+    public static Set<String> DSL_CRUD_ID_SET = new HashSet<>();
 
-    public DslMappedStatementBuild(Class entityClazz, List<String> dslMapperList, Configuration configuration){
+    private String mapper;
+
+    public DslMappedStatementBuild(String mapper, Class entityClazz, Configuration configuration){
         super(entityClazz, configuration);
-        this.dslMapperList = dslMapperList;
+        this.mapper = mapper;
     }
 
     @Override
     public Map<String, MappedStatement> crateMappedStatementMap() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException, IOException {
         Map<String, MappedStatement> mappedStatementMap = new HashMap<>();
-        XNode xNode;
-        for(String dslMapper: dslMapperList){
-            if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.dslQuery".equals(dslMapper)){
-                xNode = this.dslQuery(dslMapper);
-            }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.dslQueryOne".equals(dslMapper)){
-                xNode = this.dslQuery(dslMapper);
-            }else if("com.tailwolf.mybatis.core.common.dao.EntityOptMapper.dslDelete".equals(dslMapper)){
-                xNode = this.dslDelete(dslMapper);
-            }else if("com.tailwolf.mybatis.core.common.dao.DslOptMapper.joinQuery".equals(dslMapper)){
-                xNode = this.dslQuery(dslMapper);
-            } else{
-                xNode = this.dslUpdate(dslMapper);
-            }
-            MappedStatement mappedStatement = this.getMappedStatement(dslMapper, xNode);
-            mappedStatementMap.put(dslMapper, mappedStatement);
-        }
+        //双表dsl查询
+        String id = "com.tailwolf.mybatis.core.common.dao.DslOptMapper.joinQuery";
+        DSL_CRUD_ID_SET.add(id);
+        XNode Node = dslQuery(id);
+        MappedStatement insertEntityMappedStatement = this.getMappedStatement(id, Node);
+        mappedStatementMap.put(id, insertEntityMappedStatement);
+
+        //单表dsl查询
+        id = mapper + "." + "dslQuery";
+        DSL_CRUD_ID_SET.add(id);
+        Node = dslQuery(id);
+        MappedStatement dslQueryMappedStatement = this.getMappedStatement(id, Node);
+        mappedStatementMap.put(id, dslQueryMappedStatement);
+        //单表dsl查询返回一个对象
+        id = mapper + "." + "dslQueryOne";
+        DSL_CRUD_ID_SET.add(id);
+        Node = dslQuery(id);
+        MappedStatement dslQueryOneMappedStatement = this.getMappedStatement(id, Node);
+        mappedStatementMap.put(id, dslQueryOneMappedStatement);
+        //单表dsl删除
+        id = mapper + "." + "dslDelete";
+        DSL_CRUD_ID_SET.add(id);
+        Node = dslQuery(id);
+        MappedStatement dslDeleteMappedStatement = this.getMappedStatement(id, Node);
+        mappedStatementMap.put(id, dslDeleteMappedStatement);
+        //单表dsl更新
+        id = mapper + "." + "dslUpdate";
+        DSL_CRUD_ID_SET.add(id);
+        Node = dslQuery(id);
+        MappedStatement dslUpdateMappedStatement = this.getMappedStatement(id, Node);
+        mappedStatementMap.put(id, dslUpdateMappedStatement);
         return mappedStatementMap;
     }
 }

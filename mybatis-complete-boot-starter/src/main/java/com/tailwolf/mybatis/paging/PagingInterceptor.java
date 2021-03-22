@@ -1,6 +1,7 @@
 package com.tailwolf.mybatis.paging;
 
 import com.tailwolf.mybatis.core.common.interceptor.BaseInterceptor;
+import com.tailwolf.mybatis.core.dsl.build.DslMappedStatementBuild;
 import com.tailwolf.mybatis.core.util.ReflectionUtil;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
@@ -31,7 +32,6 @@ import java.util.*;
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PagingInterceptor extends BaseInterceptor implements Interceptor {
-    private String dslQueryMapper;
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -41,7 +41,7 @@ public class PagingInterceptor extends BaseInterceptor implements Interceptor {
         }
         BoundSql boundSql = preparedStatementHandler.getBoundSql();
         MappedStatement mappedStatement = (MappedStatement) ReflectionUtil.getProperty(preparedStatementHandler, InterceptorConstant.MAPPEDS_TATEMENT);
-        if(!mappedStatement.getId().equals(dslQueryMapper)){
+        if(!DslMappedStatementBuild.DSL_CRUD_ID_SET.contains(mappedStatement.getId())){
             return invocation.proceed();
         }
 
@@ -69,7 +69,6 @@ public class PagingInterceptor extends BaseInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties properties) {
-        this.dslQueryMapper = properties.getProperty(InterceptorConstant.DSL_QUERY);
     }
 
     /**

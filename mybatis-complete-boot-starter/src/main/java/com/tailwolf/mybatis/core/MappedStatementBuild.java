@@ -388,7 +388,7 @@ public abstract class MappedStatementBuild {
      */
     protected MappedStatement getMappedStatement(String method, XNode xNode) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         XMLLanguageDriver lang = new XMLLanguageDriver();
-        Log statementLog = LogFactory.getLog(entityClazz.getName());
+        Log statementLog = LogFactory.getLog(method);
 
         ParameterMap defaultParameterMap = (new ParameterMap.Builder(configuration, "defaultParameterMap", (Class) null, new ArrayList())).build();
 

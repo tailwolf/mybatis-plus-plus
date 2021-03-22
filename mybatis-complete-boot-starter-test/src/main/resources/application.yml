@@ -41,6 +41,8 @@ mybatis:
 #设置日志root级别
 logging:
   level:
-    root: info
+    com.tailwolf.mapper: debug
+    #如果要打印联表查询的日志，需要加上这个路径
+    com.tailwolf.mybatis.core.common.dao: debug
   pattern:
     console: "%d{yyyy-MM-dd} [%thread] %-5level %logger{50} - %msg%n"

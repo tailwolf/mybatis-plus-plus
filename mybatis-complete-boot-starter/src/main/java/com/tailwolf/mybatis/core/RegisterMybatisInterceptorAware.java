@@ -1,12 +1,10 @@
 package com.tailwolf.mybatis.core;
 
-import com.tailwolf.mybatis.core.api.interceptor.EntitySqlInterceptor;
-import com.tailwolf.mybatis.core.api.interceptor.EntityStatementInterceptor;
+import com.tailwolf.mybatis.core.dynamic.interceptor.DynamicStatementInterceptor;
 import com.tailwolf.mybatis.core.dsl.interceptor.DslSqlInterceptor;
 import com.tailwolf.mybatis.datasourse.SwitchDataSourseInterceptor;
 import com.tailwolf.mybatis.fill.FillInterceptor;
 import com.tailwolf.mybatis.paging.PagingInterceptor;
-import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.BeansException;
@@ -42,9 +40,9 @@ public class RegisterMybatisInterceptorAware implements ApplicationContextAware 
         cgLibExecutorInterceptor.setProperties(properties);
         configuration.addInterceptor(cgLibExecutorInterceptor);
         //替换MappedStatement的id拦截器
-        EntitySqlInterceptor entitySqlInterceptor = new EntitySqlInterceptor();
-        entitySqlInterceptor.setProperties(properties);
-        configuration.addInterceptor(entitySqlInterceptor);
+//        EntitySqlInterceptor entitySqlInterceptor = new EntitySqlInterceptor();
+//        entitySqlInterceptor.setProperties(properties);
+//        configuration.addInterceptor(entitySqlInterceptor);
         //数据源切换拦截器
         SwitchDataSourseInterceptor switchDataSourseInterceptor = new SwitchDataSourseInterceptor();
         switchDataSourseInterceptor.setProperties(properties);
@@ -59,7 +57,7 @@ public class RegisterMybatisInterceptorAware implements ApplicationContextAware 
         fillInterceptor.setProperties(properties);
         configuration.addInterceptor(fillInterceptor);
         //实体类增删改查拦截器
-        EntityStatementInterceptor entityStatementInterceptor = new EntityStatementInterceptor();
+        DynamicStatementInterceptor entityStatementInterceptor = new DynamicStatementInterceptor();
         entityStatementInterceptor.setProperties(properties);
         configuration.addInterceptor(entityStatementInterceptor);
     }

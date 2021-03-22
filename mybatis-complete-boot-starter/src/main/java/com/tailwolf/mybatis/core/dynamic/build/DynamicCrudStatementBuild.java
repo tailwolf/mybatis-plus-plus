@@ -1,4 +1,4 @@
-package com.tailwolf.mybatis.core.api.build;
+package com.tailwolf.mybatis.core.dynamic.build;
 
 import com.tailwolf.mybatis.core.MappedStatementBuild;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -17,21 +17,23 @@ import java.util.Set;
  * @author tailwolf
  * @date 2020-09-22
  */
-public class EntityCrudStatementBuild extends MappedStatementBuild {
+public class DynamicCrudStatementBuild extends MappedStatementBuild {
 
-    public static Set<String> ENTITY_CRUD_ID_SET = new HashSet<>();
+    public static Set<String> DYNAMIC_TABLE_CRUD_ID_SET = new HashSet<>();
 
-    public EntityCrudStatementBuild(Class entityClazz, Configuration configuration){
+    private String mapper;
+
+    public DynamicCrudStatementBuild(String mapper, Class entityClazz, Configuration configuration){
         super(entityClazz, configuration);
+        this.mapper = mapper;
     }
 
     @Override
     public Map<String, MappedStatement> crateMappedStatementMap() throws IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-        String typeName = entityClazz.getTypeName();
         Map<String, MappedStatement> mappedStatementMap = new HashMap<>();
         //插入实体类
-        String id = typeName + "." + "insert";
-        ENTITY_CRUD_ID_SET.add(id);
+        String id = mapper + "." + "insert";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         XNode Node = insert(id);
         MappedStatement insertEntityMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, insertEntityMappedStatement);
@@ -42,53 +44,54 @@ public class EntityCrudStatementBuild extends MappedStatementBuild {
 //        MappedStatement insertBatchMappedStatement = this.getMappedStatement(id, Node);
 //        mappedStatementMap.put(id, insertBatchMappedStatement);
         //通过主键更新实体类
-        id = typeName + "." + "updateByPk";
-        ENTITY_CRUD_ID_SET.add(id);
+        id = mapper + "." + "updateByPk";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         Node = updateByPk(id);
         MappedStatement updateByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, updateByPkMappedStatement);
         //通过主键批量删除
-        id = typeName + "." + "deleteBatchByPk";
-        ENTITY_CRUD_ID_SET.add(id);
+        id = mapper + "." + "deleteBatchByPk";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         Node = deleteBatchByPk(id);
         MappedStatement deleteBatchByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, deleteBatchByPkMappedStatement);
         //通过主键删除
-        id = typeName + "." + "deleteByPk";
-        ENTITY_CRUD_ID_SET.add(id);
+        id = mapper + "." + "deleteByPk";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         Node = deleteByPk(id);
         MappedStatement deleteByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, deleteByPkMappedStatement);
         //通过实体类删除
-        id = typeName + "." + "delete";
-        ENTITY_CRUD_ID_SET.add(id);
+        id = mapper + "." + "delete";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         Node = delete(id);
         MappedStatement deleteMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, deleteMappedStatement);
         //通过实体类查询列表
-        id = typeName + "." + "findList";
-        ENTITY_CRUD_ID_SET.add(id);
+        id = mapper + "." + "findList";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         Node = findList(id);
         MappedStatement getListMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, getListMappedStatement);
         //通过主键查询实体类
-        id = typeName + "." + "findByPk";
-        ENTITY_CRUD_ID_SET.add(id);
+        id = mapper + "." + "findByPk";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         Node = findByPk(id);
         MappedStatement findByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, findByPkMappedStatement);
         //通过实体类查询一个实体类
-        id = typeName + "." + "findOne";
-        ENTITY_CRUD_ID_SET.add(id);
+        id = mapper + "." + "findOne";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         Node = findList(id);
         MappedStatement findOneMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, findOneMappedStatement);
         //通过主键批量更新
-        id = typeName + "." + "updateBatchByPk";
-        ENTITY_CRUD_ID_SET.add(id);
+        id = mapper + "." + "updateBatchByPk";
+        DYNAMIC_TABLE_CRUD_ID_SET.add(id);
         Node = updateBatchByPk(id);
         MappedStatement updateBatchByPkMappedStatement = this.getMappedStatement(id, Node);
         mappedStatementMap.put(id, updateBatchByPkMappedStatement);
+
         return mappedStatementMap;
     }
 }

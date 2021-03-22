@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.tailwolf.mybatis.core.config.MybatisCompleteAutoConfiguration,\
-  com.tailwolf.mybatis.core.config.MapperListProperties
+  com.tailwolf.mybatis.core.config.MybatisCompleteAutoConfiguration

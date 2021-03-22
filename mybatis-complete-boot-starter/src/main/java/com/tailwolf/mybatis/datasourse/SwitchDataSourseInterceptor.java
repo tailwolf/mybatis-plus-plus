@@ -1,6 +1,7 @@
 package com.tailwolf.mybatis.datasourse;
 
 import com.tailwolf.mybatis.core.common.interceptor.BaseInterceptor;
+import com.tailwolf.mybatis.core.dsl.build.DslMappedStatementBuild;
 import com.tailwolf.mybatis.core.dsl.wrapper.base.BaseWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.MapperMethod;
@@ -32,7 +33,6 @@ import java.util.*;
         @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})
 })
 public class SwitchDataSourseInterceptor extends BaseInterceptor implements Interceptor {
-    private List<String> dslMapperList = new ArrayList<>();
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -44,7 +44,7 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
         MappedStatement mappedStatement = (MappedStatement)args[0];
         String mappedStatementId = mappedStatement.getId();
         String dataSourceName = "";
-        if(this.dslMapperList.contains(mappedStatementId)){
+        if(DslMappedStatementBuild.DSL_CRUD_ID_SET.contains(mappedStatementId)){
             Object parameter = args[1];
             MapperMethod.ParamMap paramMap = (MapperMethod.ParamMap) parameter;
             BaseWrapper dslWrapper = (BaseWrapper)paramMap.get("dslWrapper");
@@ -182,10 +182,5 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
 
     @Override
     public void setProperties(Properties properties) {
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.DSL_QUERY));
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.DSL_QUERY_ONE));
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.DSL_UPDATE));
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.DSL_DELETE));
-        this.dslMapperList.add(properties.getProperty(InterceptorConstant.JOIN_QUERY));
     }
 }
