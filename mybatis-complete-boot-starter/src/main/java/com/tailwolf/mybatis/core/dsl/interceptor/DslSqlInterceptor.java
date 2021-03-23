@@ -75,7 +75,7 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             if (tableAnnot == null) {
                 throw new MybatisCompleteRuntimeException("实体类必需加上注解@Table");
             }
-            String tableName = tableAnnot.tableName();
+            String tableName = tableAnnot.name();
 
             List<Field> beanAnnotateFieldList = ReflectionUtil.getAllFields(entityClazz);
             List<ColumnModel> annotateColumnModelList = ColumnModelUtil.createColumnModel(beanAnnotateFieldList, new ArrayList<>());
@@ -123,8 +123,8 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             Class<?> joinObjectClazz = joinObject.getClass();
             Table fromObjectTableAnnot = fromObjectClazz.getAnnotation(Table.class);
             Table joinObjectTableAnnot = joinObjectClazz.getAnnotation(Table.class);
-            String fromObjectTableName = fromObjectTableAnnot.tableName();
-            String joinObjectTableName = joinObjectTableAnnot.tableName();
+            String fromObjectTableName = fromObjectTableAnnot.name();
+            String joinObjectTableName = joinObjectTableAnnot.name();
 
             Map<String, Object> dynamicContextMap = new HashMap<>();
             NodeIterator onConditionNodeIterator = joinQuery.getOnConditionsQueue();
@@ -199,7 +199,7 @@ public class DslSqlInterceptor extends BaseInterceptor implements Interceptor {
             if(tableAnnot == null){
                 throw new MybatisCompleteRuntimeException("实体类必需加上注解@Table");
             }
-            String tableName = tableAnnot.tableName();
+            String tableName = tableAnnot.name();
 
             List<Field> beanAnnotateFieldList = ReflectionUtil.getAllFields(entity.getClass());
             List<ColumnModel> annotateColumnModelList = ColumnModelUtil.createColumnModel(beanAnnotateFieldList, new ArrayList<>());

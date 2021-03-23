@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode()
-@Table(tableName = "sys_user")
+@Table(name = "sys_user")
 public class SysUser implements Serializable{
     //主键id
     private Integer id;

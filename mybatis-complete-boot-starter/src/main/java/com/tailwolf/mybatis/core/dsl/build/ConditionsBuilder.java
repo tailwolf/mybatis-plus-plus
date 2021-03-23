@@ -226,7 +226,7 @@ public class ConditionsBuilder {
         String implClass = lambda.getImplClass().replace("/", ".");
         Class<?> clazz = Class.forName(implClass);
         Table tableAnnot = clazz.getAnnotation(Table.class);
-        return tableAnnot.tableName();
+        return tableAnnot.name();
     }
 
     private String whereTemplateName(Object value, String conditionKeywork, Object queryEntity) {
@@ -443,7 +443,7 @@ public class ConditionsBuilder {
             column = this.analyseGetterName(lambda.getImplMethodName());
         } else{
             Table tableAnnot = filedNameObject.getClass().getAnnotation(Table.class);
-            String tableName = tableAnnot.tableName().trim();
+            String tableName = tableAnnot.name().trim();
             if(tableName.equals(fromObjectTableName)){
                 column = MontageSqlConstant.T1 + ".*";
             }else{

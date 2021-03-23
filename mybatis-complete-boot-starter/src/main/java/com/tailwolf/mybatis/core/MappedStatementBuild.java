@@ -446,6 +446,6 @@ public abstract class MappedStatementBuild {
      */
     protected String getTableName(){
         Table tableAnnot = (Table)entityClazz.getAnnotation(Table.class);
-        return tableAnnot.tableName();
+        return tableAnnot.name();
     }
 }
