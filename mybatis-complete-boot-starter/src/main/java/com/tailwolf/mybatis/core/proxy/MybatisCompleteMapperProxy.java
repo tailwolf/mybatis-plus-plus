@@ -58,7 +58,9 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
                         boolean pk = columnModel.isPk();
 
                         if(pk){
-                            ReflectionUtil.setProperty(entity, fieldName, arg);
+                            String fieldType = field.getType().getName();
+                            String argType = arg.getClass().getName();
+                            setAndConverValue(fieldType, argType, fieldName, entity, arg);
                             args[0] = entity;
                             break;
                         }
@@ -70,6 +72,7 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
                     Collection collection = (Collection)arg;
                     Class<?> clazz = null;
                     String pkFieldName = null;
+                    Field pkField = null;
                     end: for(Object obj: collection){
                         if(!className.equals(obj.getClass().getName())){
                             clazz = Class.forName(className);
@@ -83,6 +86,7 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
 
                                 if(pk){
                                     pkFieldName = fieldName;
+                                    pkField = field;
                                     break end;
                                 }
                             }
@@ -95,9 +99,11 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
                         }
 
                         List entityList = new ArrayList();
+                        String fieldType = pkField.getType().getName();
+                        String argType = arg.getClass().getName();
                         for(Object obj: collection){
                             Object entity = clazz.newInstance();
-                            ReflectionUtil.setProperty(entity, pkFieldName, obj);
+                            setAndConverValue(fieldType, argType, pkFieldName, entity, obj);
                             entityList.add(entity);
                         }
                         args[0] = entityList;
@@ -152,5 +158,24 @@ public class MybatisCompleteMapperProxy implements InvocationHandler, Serializab
 
     private boolean isDefaultMethod(Method method) {
         return (method.getModifiers() & 1033) == 1 && method.getDeclaringClass().isInterface();
+    }
+
+    private void setAndConverValue(String fieldType, String argType, String fieldName, Object entity, Object arg) throws IllegalAccessException {
+        if(fieldType.equals(argType)){
+            ReflectionUtil.setProperty(entity, fieldName, arg);
+        }else{
+            if(fieldType.equals("java.lang.Short")){
+                arg = Short.valueOf(arg.toString());
+            }else if(fieldType.equals("java.lang.Integer")){
+                arg = Integer.valueOf(arg.toString());
+                ReflectionUtil.setProperty(entity, fieldName, Integer.valueOf(arg.toString()));
+            }else if(fieldType.equals("java.lang.Long")){
+                arg = Long.valueOf(arg.toString());
+                ReflectionUtil.setProperty(entity, fieldName, Long.valueOf(arg.toString()));
+            }else if(fieldType.equals("java.lang.String")){
+                arg = String.valueOf(arg.toString());
+            }
+            ReflectionUtil.setProperty(entity, fieldName, arg);
+        }
     }
 }
