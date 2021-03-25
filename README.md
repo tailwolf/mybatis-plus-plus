@@ -41,7 +41,7 @@ mybatis-complete没有改变任何mybatis的原生功能和配置，它的核心
 <dependency>
   <groupId>com.github.tailwolf</groupId>
   <artifactId>mybatis-complete-boot-starter</artifactId>
-  <version>0.5.0-RELEASE</version>
+  <version>0.5.1</version>
 </dependency>
 ```
 
