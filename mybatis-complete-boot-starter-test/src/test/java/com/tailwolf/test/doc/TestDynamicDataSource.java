@@ -47,4 +47,12 @@ public class TestDynamicDataSource {
         sysUserService.testAnnotateDataSource();
         sysUserService.testAnnotateDataSource2();
     }
+
+    /**
+     * 测试多数据源回滚
+     */
+    @Test
+    public void dataSourceRollBack(){
+        sysUserService.testDataSourceRollBack();
+    }
 }

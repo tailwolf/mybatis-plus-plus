@@ -23,6 +23,8 @@ public interface SysUserService extends EntityOptService<SysUser>{
 
     /**
      * 测试回滚
+     *
+     * 有问题吗，未通过
      */
     void testDataSourceRollBack();
 }

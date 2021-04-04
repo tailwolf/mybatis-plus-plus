@@ -33,8 +33,8 @@ mybatis-complete没有改变任何mybatis的原生功能和配置，它的核心
   - [ ] 正向工程（1.5版本后开发）
 
 ## 技术选型
-1.java 11  
-2.Spring Boot 2.x
+1. java 8  
+2. Spring Boot 2.x
 
 ## 引用方式
 ```xml

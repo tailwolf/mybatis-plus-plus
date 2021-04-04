@@ -52,7 +52,6 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
             dataSourceName = (String)ReflectionUtil.getProperty(dslWrapper, "dataSource");
         }
         if(StringUtils.isEmpty(dataSourceName)){
-            //com.sun.proxy.$Proxy75.test(Unknown Source)
             String[] splitStr = mappedStatementId.split("\\.");
             //mapper接口方法名
             String idMethodName = splitStr[splitStr.length-1];
@@ -76,10 +75,7 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
                             if(annotation != null){//有注解
                                 dataSourceName = annotation.name();
                             }else{//无注解
-                                dataSourceName = stackTraceIncrement(i+1, stackArray);
-                                if(StringUtils.isEmpty(dataSourceName)){
-                                    dataSourceName = stackTraceDecrement(i-1, stackArray);
-                                }
+                                dataSourceName = stackTraceDataSource(i+1, stackArray);
                             }
                         }
 
@@ -132,43 +128,31 @@ public class SwitchDataSourseInterceptor extends BaseInterceptor implements Inte
     }
 
 
-    private String stackTraceIncrement(int index, StackTraceElement[] stackArray) throws ClassNotFoundException {
+    private String stackTraceDataSource(int index, StackTraceElement[] stackArray) throws ClassNotFoundException {
         for(int i = index; i < stackArray.length; i++){
-            return stackTraceDataSource(stackArray[i]);
-        }
-        return null;
-    }
-
-    private String stackTraceDecrement(int index, StackTraceElement[] stackArray) throws ClassNotFoundException {
-        for(int i = index; i < 0; i--){
-            return stackTraceDataSource(stackArray[i]);
-        }
-        return null;
-    }
-
-    private String stackTraceDataSource(StackTraceElement stackTraceElement) throws ClassNotFoundException {
-        String fileName = stackTraceElement.getFileName();
-        if(!StringUtils.isEmpty(fileName)){
-            String className = stackTraceElement.getClassName();
-            String methodName = stackTraceElement.getMethodName();
-            Class<?> clazz = Class.forName(className);
-            Method[] declaredMethods = clazz.getDeclaredMethods();
-            for(Method method: declaredMethods){
-                if(method.getName().equals(methodName)){
-                    com.tailwolf.mybatis.datasourse.DataSource annotation = method.getAnnotation(com.tailwolf.mybatis.datasourse.DataSource.class);
-                    if(annotation != null){
-                        return annotation.name();
-                    }else{
-                        //查看该方法所在的类上有没有该注解
-                        annotation = clazz.getAnnotation(com.tailwolf.mybatis.datasourse.DataSource.class);
-                        if(annotation != null){//有注解
+            StackTraceElement stackTraceElement = stackArray[i];
+            String fileName = stackTraceElement.getFileName();
+            if(!StringUtils.isEmpty(fileName)){
+                String className = stackTraceElement.getClassName();
+                String methodName = stackTraceElement.getMethodName();
+                Class<?> clazz = Class.forName(className);
+                Method[] declaredMethods = clazz.getDeclaredMethods();
+                for(Method method: declaredMethods){
+                    if(method.getName().equals(methodName)){
+                        com.tailwolf.mybatis.datasourse.DataSource annotation = method.getAnnotation(com.tailwolf.mybatis.datasourse.DataSource.class);
+                        if(annotation != null){
                             return annotation.name();
+                        }else{
+                            //查看该方法所在的类上有没有该注解
+                            annotation = clazz.getAnnotation(com.tailwolf.mybatis.datasourse.DataSource.class);
+                            if(annotation != null){//有注解
+                                return annotation.name();
+                            }
                         }
                     }
                 }
             }
         }
-
         return null;
     }
 
