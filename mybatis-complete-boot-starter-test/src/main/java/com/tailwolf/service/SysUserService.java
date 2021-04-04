@@ -12,12 +12,17 @@ public interface SysUserService extends EntityOptService<SysUser>{
      * 指定了数据源
      * @return
      */
-    List<SysUser> testAnnotateDataSource();
+    boolean testAnnotateDataSource();
 
     /**
      * 测试使用注解指定数据源
      * 不指定数据源，作为对照
      * @return
      */
-    List<SysUser> testAnnotateDataSource2();
+    boolean testAnnotateDataSource2();
+
+    /**
+     * 测试回滚
+     */
+    void testDataSourceRollBack();
 }

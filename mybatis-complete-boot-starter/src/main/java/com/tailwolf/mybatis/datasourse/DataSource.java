@@ -2,10 +2,7 @@ package com.tailwolf.mybatis.datasourse;
 
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 设置数据源注解
@@ -15,6 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
+@Inherited
 public @interface DataSource {
     String name();
 }

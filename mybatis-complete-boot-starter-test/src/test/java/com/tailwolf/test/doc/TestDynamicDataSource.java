@@ -39,11 +39,12 @@ public class TestDynamicDataSource {
         System.out.println(JSON.toJSONString(dsSysUserList));
     }
 
+    /**
+     * 测试基于注解使用的数据源
+     */
     @Test
     public void annotateDataSource(){
-        List<SysUser> dsSysUserList = sysUserService.testAnnotateDataSource();
-        System.out.println(JSON.toJSONString(dsSysUserList));
-        List<SysUser> sysUserList = sysUserService.testAnnotateDataSource2();
-        System.out.println(JSON.toJSONString(sysUserList));
+        sysUserService.testAnnotateDataSource();
+        sysUserService.testAnnotateDataSource2();
     }
 }

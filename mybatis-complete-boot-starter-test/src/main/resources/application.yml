@@ -21,7 +21,7 @@ mybatis:
     # 数据源列表
     propertiesList:
       - driverClassName: com.mysql.cj.jdbc.Driver
-        name: datasource1 #数据源名称
+        name: datasource2 #数据源名称
         url: jdbc:mysql://localhost:3306/mybatis-complete2?useSSL=false&useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
         username: root
         password: 12345678
